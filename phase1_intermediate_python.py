@@ -3,9 +3,11 @@
 # A function is standalone, not attached to any class
 # A method is a function defined inside a class, and it operates on an instance via self
 
-#And Step 14: magic methods "duner" (double underscore) — __str__, __repr__, __eq__
+#And Step 14: magic methods "dunder" (double underscore) — __str__, __repr__, __eq__
 
 #1. create a base class with __init__ and define print for it
+from utils.fuel_checks import check_range, check_fuel
+
 class FlyingObjects:
 
     def __init__(self, category: str, speed: int):
@@ -26,7 +28,7 @@ print(uav)
 
 #3. subclass that inherits from base class
 #uses super().__init__(), and overrides or extends the parent's method
-class FighterJet(FlyingObjects):
+class FighterJets(FlyingObjects):
     def __eq__(self, other):
         return self.category == other.category
 
@@ -40,18 +42,28 @@ class FighterJet(FlyingObjects):
         super().check_status()
         print(f"Is made of {self.material}.")
 
-new_fighter_jet = FighterJet("Fighter Jet", 3529, "Titanium")
+new_fighter_jet = FighterJets("Fighter Jet", 3529, "Titanium")
 new_fighter_jet.check_status()
 print(new_fighter_jet.speed)
 print(new_fighter_jet)
 
 #__repr__
-fighter_jets = [FighterJet("long-range", 4000, "Titanium"), FighterJet("Short-range", 800, "Aluminum")]
+fighter_jets = [FighterJets("long-range", 4000, "Titanium"), FighterJets("Short-range", 800, "Aluminum")]
 print(fighter_jets)
 
-#__eg__
-first_jet = FighterJet("One in category", 3000, "Titanium")
-second_jet = FighterJet("One in category", 3000, "Titanium")
+#__eq__
+first_jet = FighterJets("One in category", 3000, "Titanium")
+second_jet = FighterJets("One in category", 3000, "Titanium")
 print(first_jet == second_jet)
 
+#Step 15: Modules and packages: imports __init__.py
+class AdvancedFighterJets(FighterJets):
+    def __init__(self, category: str, speed: int, material: str, fuel_type: str):
+        super().__init__(category, speed, material)
+        self.fuel_type = fuel_type
+
+sr_71 = AdvancedFighterJets("Long-range", 4000, "Titanium", "Jet Propellant 7")
+fuel_type = sr_71.fuel_type
+check_range(fuel_type)
+check_fuel(5000.66)
 
