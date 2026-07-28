@@ -6,6 +6,7 @@
 #And Step 14: magic methods "dunder" (double underscore) — __str__, __repr__, __eq__
 
 #1. create a base class with __init__ and define print for it
+import time
 from utils.fuel_checks import check_range, check_fuel
 
 class FlyingObjects:
@@ -66,4 +67,86 @@ sr_71 = AdvancedFighterJets("Long-range", 4000, "Titanium", "Jet Propellant 7")
 fuel_type = sr_71.fuel_type
 check_range(fuel_type)
 check_fuel(5000.66)
+
+#for console result clarity
+print("\nTiming Decorators:")
+
+#16: Decorators
+#timing decorator: Measure how long a function takes to run — spot slow tests/operations
+#import time is in the top of the document
+
+def check_test_time_decorator(func):
+    def time_wrapper(*args, **kwargs):
+        start_test_time = time.time()
+        logged_test_time = func(*args, **kwargs)
+        end_test_time = time.time()
+        print(f"{func.__name__} executed {end_test_time - start_test_time:.4f} seconds")
+        return logged_test_time
+    return time_wrapper 
+
+#decorator for imported func
+check_fuel_time_decorator = check_test_time_decorator(check_fuel)
+
+#decorator for other tests
+@check_test_time_decorator	
+def check_registration():
+    time.sleep(5.07)
+    return "finished"
+
+@check_test_time_decorator
+def check_pass_reset():
+    time.sleep(5)
+    return "finished"
+
+check_registration()
+check_pass_reset()
+check_fuel_time_decorator(88.09)
+
+
+#logging decorator: Record when a function is called, with what arguments, and what it returned — for debugging/audit trails
+#for console result clarity
+print("\nLogging Decorators:")
+
+def logging_for_tests_decorator(func):
+    def wrapper(*args, **kwargs):
+        print(f"Processing {func.__name__} with args={args}, kwargs={kwargs}")
+        data = func(*args, **kwargs)   
+        print(f"{func.__name__}, result: {data}")
+        return data
+    return wrapper
+
+#reusing method used in time wrapper in logging
+record_logs_registration = logging_for_tests_decorator(check_registration)
+record_logs_registration()
+
+#defining new method for logging
+@logging_for_tests_decorator
+def method_for_logging(str: str):
+    print(str)
+    return str == str
+
+method_for_logging("Key-word")
+print("\nRetry decorator")
+
+#retry decorator: Automatically re-run a function if it fails, up to N times — handles flaky operations (network calls, flaky tests)
+def retry_decorator(max_attempts=3):
+    def inside_decorator(func):
+        def wrapper_retry(*args, **kwargs):
+            for attempt in range(1, max_attempts + 1):
+                try:
+                    return func(*args, **kwargs)
+                except Exception as e:
+                    print(f"Attempt {attempt} is failed: {e}")
+            raise Exception(f"Max {max_attempts} is reached, status: failed")
+        return wrapper_retry
+    return inside_decorator
+
+@retry_decorator(max_attempts=3)
+def func_poor_network():
+    import random
+    if random.random() < 0.7:
+        raise ConnectionError("Connection failed")
+    return "Connection established"
+
+func_poor_network()
 
