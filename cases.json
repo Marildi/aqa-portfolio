@@ -1,0 +1,46 @@
+{
+
+  "mission_profile": {
+    "satellite_id": "ORION-HEX-09",
+    "operator": "AeroSpace Dynamics Corp",
+    "status": "active",
+    "launch": {
+      "date_utc": "2026-05-14T12:04:00Z",
+      "launch_vehicle": "Falcon 9 Block 5",
+      "launch_site": "SLC-40, Cape Canaveral"
+    }
+  },
+  "orbital_parameters": {
+    "orbit_type": "LEO",
+    "altitude_km": 550.0,
+    "inclination_degrees": 53.0,
+    "eccentricity": 0.00012,
+    "orbital_period_minutes": 95.6
+  },
+  "subsystems": {
+    "adcs": {
+      "system_name": "Attitude Determination and Control System",
+      "actuators": ["reaction_wheels", "magnetorquers"],
+      "sensors": ["star_tracker", "sun_sensor", "imu"],
+      "pointing_accuracy_arcsec": 0.05
+    },
+    "eps": {
+      "system_name": "Electrical Power System",
+      "battery_capacity_wh": 1200.0,
+      "solar_array_generation_watts": 450.0,
+      "bus_voltage_v": 28.0
+    },
+    "propulsion": {
+      "thruster_type": "Hall Effect Thruster",
+      "propellant": "Xenon",
+      "propellant_mass_kg": 15.4,
+      "specific_impulse_seconds": 1650
+    }
+  },
+  "telemetry_current": {
+    "timestamp_utc": "2026-08-01T20:01:45Z",
+    "cpu_temperature_celsius": 24.5,
+    "battery_soc_percent": 88.2,
+    "downlink_rate_mbps": 150.0
+  }
+}
