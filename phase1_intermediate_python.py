@@ -207,3 +207,5 @@ print(get_all_engines_types())
 print(get_all_avionics_subsystems())
 
 
+#Step 20: requirements.txt vs pyproject.toml, currently using .toml, added uv add --dev pytest
+
