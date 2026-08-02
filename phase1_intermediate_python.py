@@ -18,7 +18,7 @@
 #     def __str__(self):
 #         return f"Category with __str__: {self.category}"
 
-# #2. methods for the class
+# # #2. methods for the class
 #     def check_status(self):
 #         print(f"{self.category} (speed {self.speed} km/h) is sent to collection facility.")
 
@@ -180,15 +180,30 @@
 # with SuiteProcessing("cases.json") as f:
 #     print("finished")
 
-#Step 18: Generators and yield — lazy evaluation
-def read_large_json(filename):
-    with open(filename, "r") as f:
-        for line in f:
-            yield line.strip()
+# #Step 18: Generators and yield — lazy evaluation
+# def read_large_json(filename):
+#     with open(filename, "r") as f:
+#         for line in f:
+#             yield line.strip()
 
-xenon_lines = (line for line in read_large_json("cases.json") if "Xenon" in line)
+# xenon_lines = (line for line in read_large_json("cases.json") if "Xenon" in line)
 
-print(next(xenon_lines))
-print(next(xenon_lines))
+# print(next(xenon_lines))
+# print(next(xenon_lines))
+
+#Step 19: Type hints (typing module) 
+#added hints in the fuel_checks.py
+
+from utils.fuel_checks import (
+    get_all_avionics_subsystems,
+    get_all_engines_types,
+    get_all_possible_materials,
+    get_locations,
+)
+
+print(get_all_possible_materials())
+print(get_locations())
+print(get_all_engines_types())
+print(get_all_avionics_subsystems())
 
 
