@@ -33,6 +33,8 @@
     "propulsion": {
       "thruster_type": "Hall Effect Thruster",
       "propellant": "Xenon",
+      "propellant1": "Xenon",
+      "propellant2": "Xenon",
       "propellant_mass_kg": 15.4,
       "specific_impulse_seconds": 1650
     }

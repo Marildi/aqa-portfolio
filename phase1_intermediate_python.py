@@ -147,35 +147,48 @@
 
 #Step 17: Context managers — with statements, writing own using __enter__/__exit__
 #custom context manager class, logs entry/exit
-import json
+# import json
 
 
-class SuiteProcessing:
-    def __init__(self, filename):
-        self.filename = filename
+# class SuiteProcessing:
+#     def __init__(self, filename):
+#         self.filename = filename
 
-    #case 1: enter problem - a context manager's safety net - script finishes if the error ocurred in the __enter__ block. Json file has a comment in the beginning of the file
-    # def __enter__(self):
-    #     self.file = open(self.filename, "r")   # open the actual file
-    #     data_from_file = json.load(self.file)   # json.load (no "s") reads directly from a file object
-    #     print(data_from_file)
-    #     return data_from_file
+#     #case 1: enter problem - a context manager's safety net - script finishes if the error ocurred in the __enter__ block. Json file has a comment in the beginning of the file
+#     # def __enter__(self):
+#     #     self.file = open(self.filename, "r")   # open the actual file
+#     #     data_from_file = json.load(self.file)   # json.load (no "s") reads directly from a file object
+#     #     print(data_from_file)
+#     #     return data_from_file
 
-    #case 2: close the file in the enter, then crash the exit logic - won't crash because it's deliberate design choice in Python, it will call the second close() silently
-    def __enter__(self):
-            self.file = open(self.filename, "r")   # open the actual file
-            data_from_file = json.load(self.file)   # json.load (no "s") reads directly from a file object
-            print(data_from_file)
-            self.file.close()
+#     #case 2: close the file in the enter, then crash the exit logic - won't crash because it's deliberate design choice in Python, it will call the second close() silently
+#     def __enter__(self):
+#             self.file = open(self.filename, "r")   # open the actual file
+#             data_from_file = json.load(self.file)   # json.load (no "s") reads directly from a file object
+#             print(data_from_file)
+#             self.file.close()
 
-    #case 3: trigger an error in exit
-    #io.UnsupportedOperation: not writable - would show this error if file wasn't already closed
-    def __exit__(self, exc_type, exc, tb):
-        self.file.write("\n# processed")   # this WILL fail - file was opened in "r" mode
-        self.file.close()
-        if exc_type is not None:
-            print(f"Error occurred: {exc}")
-        return False
+#     #case 3: trigger an error in exit
+#     #io.UnsupportedOperation: not writable - would show this error if file wasn't already closed in the __enter__ block
+#     def __exit__(self, exc_type, exc, tb):
+#         self.file.write("\n# processed")   # this WILL fail - file was opened in "r" mode
+#         self.file.close()
+#         if exc_type is not None:
+#             print(f"Error occurred: {exc}")
+#         return False
 
-with SuiteProcessing("cases.json") as f:
-    print("finished")
+# with SuiteProcessing("cases.json") as f:
+#     print("finished")
+
+#Step 18: Generators and yield — lazy evaluation
+def read_large_json(filename):
+    with open(filename, "r") as f:
+        for line in f:
+            yield line.strip()
+
+xenon_lines = (line for line in read_large_json("cases.json") if "Xenon" in line)
+
+print(next(xenon_lines))
+print(next(xenon_lines))
+
+
