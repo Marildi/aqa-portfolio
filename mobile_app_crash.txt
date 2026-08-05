@@ -1,0 +1,32 @@
+[2026-08-02 18:52:10.114] [INFO] [AppLifecycle] Application entered foreground. Version: 4.12.2 (Build 2904)
+[2026-08-02 18:52:10.450] [INFO] [NetworkReachability] Internet status: Connected (Cellular/5G)
+[2026-08-02 18:52:12.801] [DEBUG] [AuthManager] Initiating user authentication flow. Provider: OAuth2/Auth0
+[2026-08-02 18:52:13.015] [INFO] [NetworkService] POST https://defensecloud.io HTTP/1.1
+[2026-08-02 18:52:13.562] [DEBUG] [NetworkService] Response received. Status code: 200 OK
+[2026-08-02 18:52:13.565] [INFO] [AuthManager] Authentication token received successfully. Parsing payload payload...
+[2026-08-02 18:52:13.568] [ERROR] [SecureStorage] Encryption token storage operation failed: KeychainErrorDomain (Status: -25300 / errSecItemNotFound)
+[2026-08-02 18:52:13.570] [FATAL] [CrashHandler] Unhandled Exception intercepted! Application terminated abnormally.
+--------------------------------------------------------------------------------
+FATAL EXCEPTION: main (Thread id: 1)
+Exception Type:  NullPointerException
+Message:         Attempt to invoke virtual method 'byte[] java.lang.String.getBytes()' on a null object reference during cryptographic token wrapping.
+
+Stack Trace:
+    at io.defensecloud.app.auth.SecureStorageManager.encryptToken(SecureStorageManager.java:142)
+    at io.defensecloud.app.auth.AuthManager.finalizeAuthorization(AuthManager.java:89)
+    at io.defensecloud.app.auth.AuthManager$1.onSuccess(AuthManager.java:54)
+    at io.defensecloud.app.network.NetworkService$2.run(NetworkService.java:214)
+    at android.os.Handler.handleCallback(Handler.java:942)
+    at android.os.Handler.dispatchMessage(Handler.java:99)
+    at android.os.Looper.loopOnce(Looper.java:201)
+    at android.os.Looper.loop(Looper.java:288)
+    at io.defensecloud.app.MainActivity.main(MainActivity.java:42)
+
+Device Metadata:
+  OS Version:     Android 14 (API 34)
+  Device Model:   Google Pixel 8 Pro
+  Memory Free:    2.4 GB / 12 GB
+  Disk Free:      45.8 GB
+  User ID:        7869084
+--------------------------------------------------------------------------------
+[2026-08-02 18:52:13.610] [INFO] [CrashHandler] Crash report generated: crash_auth_20260802_185213.json

@@ -194,18 +194,96 @@
 #Step 19: Type hints (typing module) 
 #added hints in the fuel_checks.py
 
-from utils.fuel_checks import (
-    get_all_avionics_subsystems,
-    get_all_engines_types,
-    get_all_possible_materials,
-    get_locations,
-)
+# from utils.fuel_checks import (
+#     get_all_avionics_subsystems,
+#     get_all_engines_types,
+#     get_all_possible_materials,
+#     get_locations,
+# )
 
-print(get_all_possible_materials())
-print(get_locations())
-print(get_all_engines_types())
-print(get_all_avionics_subsystems())
+# print(get_all_possible_materials())
+# print(get_locations())
+# print(get_all_engines_types())
+# print(get_all_avionics_subsystems())
 
 
 #Step 20: requirements.txt vs pyproject.toml, currently using .toml, added uv add --dev pytest
 
+#Step 21: Regular expressions (re module) — log-parsing practice
+import re
+
+#Find all lines containing ERROR
+print("ERRORS:")
+with open("mobile_app_crash.txt", "r") as logs_file:
+       logs_records = logs_file.readlines()
+       for line in logs_records:
+          all_lines_with_errors = re.findall("ERROR", line)
+          if all_lines_with_errors:
+               print(line)
+
+
+#Extract all timestamps from the log
+print("ALL TIMESTAMPS:")
+for line in logs_records:
+     all_timestamps = re.findall(r"(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2})", line)
+     if all_timestamps:
+          print(line.strip())
+
+
+print("\n") #for terminal view
+
+#Extract the severity level and message separately using capture groups
+import re
+from enum import IntEnum
+
+
+class Severity(IntEnum):
+    FATAL = 1
+    ERROR = 2
+    WARN = 3
+    INFO = 4
+    DEBUG = 5
+
+     #1. temporary container to collect the matches (because regex can't be sorted directly)
+collected_matches = []
+
+pattern = r"^\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}\] \[(\w+)\] \[(\w+)\] (.*)"
+
+     # 2. Extract and store the data fields
+for line in logs_records:
+     errors_data = re.search(pattern, line)
+     if errors_data:
+          level, agent, explanation = errors_data.groups()
+          # Store them grouped together as a tuple inside our list
+          collected_matches.append((level, agent, explanation))
+
+     # 3. Sort the collected list based on SEVERITY_PRIORITY 
+     # (row[0] checks the 'level' string like "INFO" or "ERROR" against  map)
+collected_matches.sort(key=lambda row: Severity[row[0]])
+
+     # 4. Print out final sorted data
+print("SEVERITY LEVELS (SORTED):")
+for level, agent, explanation in collected_matches:
+     print(f"Level: {level} | Agent: {agent} | Message: {explanation}")
+
+
+print("\n")
+  
+#Redact something sensitive (like an IP address or an ID) using re.sub()
+import re
+
+# Used parentheses () to create a capture group for "User ID: " so we can keep it
+pattern_id = r"(User\s+ID:\s*)(\d+)"
+extracted_lines = []
+
+with open("mobile_app_crash.txt", "r", encoding="utf-8") as file:
+    for line in file:
+        if re.search(pattern_id, line):
+            extracted_lines.append(line.strip())
+
+# Loop through and mask every extracted line
+for match_line in extracted_lines:
+    # \1 pulls back the text from the first capture group (User ID: ) 
+    # and only replaces the digits with XXXXXX
+    masked_line = re.sub(pattern_id, r"\1XXXXXX", match_line)
+    print(masked_line)
