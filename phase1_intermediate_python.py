@@ -290,36 +290,53 @@
 
 #Step 22: datetime and time handling, timezones
 #power management controller, telemetry validation tool (simplified)
-from _zoneinfo import ZoneInfo
-from datetime import UTC, datetime
+# from _zoneinfo import ZoneInfo
+# from datetime import UTC, datetime
 
-#record the current time in UTC 
-utc_now = datetime.now(UTC)   # timezone-aware
-print(utc_now)
+# #record the current time in UTC 
+# utc_now = datetime.now(UTC)   # timezone-aware
+# print(utc_now)
 
-#convert that timestamp into two other timezones - one for tech team, one for the aircarft that's in another country on a mission
-los_angeles_tz = ZoneInfo("America/Los_Angeles")
-los_angeles_time = datetime.now(los_angeles_tz)
-tokyo_tz = ZoneInfo("Asia/Tokyo")
-tokyo_time = datetime.now(tokyo_tz)
-print(los_angeles_time)
-print(tokyo_time)
+# #convert that timestamp into two other timezones - one for tech team, one for the aircarft that's in another country on a mission
+# los_angeles_tz = ZoneInfo("America/Los_Angeles")
+# los_angeles_time = datetime.now(los_angeles_tz)
+# tokyo_tz = ZoneInfo("Asia/Tokyo")
+# tokyo_time = datetime.now(tokyo_tz)
+# print(los_angeles_time)
+# print(tokyo_time)
 
-#store timestamps in a standardized log format (string)
-custom_format_time = utc_now.strftime("%d-%m-%Y %H:%M:%S")
-print(custom_format_time)
+# #store timestamps in a standardized log format (string)
+# custom_format_time = utc_now.strftime("%d-%m-%Y %H:%M:%S")
+# print(custom_format_time)
 
-jp_format = tokyo_time.strftime("%Y-%m-%d %H:%M:%S")
-mil_format = los_angeles_time.strftime("%m-%d-%Y %H%M")
-print(jp_format)
-print(mil_format)
+# jp_format = tokyo_time.strftime("%Y-%m-%d %H:%M:%S")
+# mil_format = los_angeles_time.strftime("%m-%d-%Y %H%M")
+# print(jp_format)
+# print(mil_format)
 
-#read a timestamp back from a log entry (string back into a datetime)
-mission_start_time_us = datetime.strptime(mil_format, "%m-%d-%Y %H%M").replace(tzinfo=los_angeles_tz)
-print(f"Start at: {mission_start_time_us.hour:02d}{mission_start_time_us.minute:02d}")
+# #read a timestamp back from a log entry (string back into a datetime)
+# mission_start_time_us = datetime.strptime(mil_format, "%m-%d-%Y %H%M").replace(tzinfo=los_angeles_tz)
+# print(f"Start at: {mission_start_time_us.hour:02d}{mission_start_time_us.minute:02d}")
       
-#calculate how much time has elapsed between two telemetry events
-mission_start_time_jp = datetime.strptime(jp_format, "%Y-%m-%d %H:%M:%S").replace(tzinfo=tokyo_tz)
-time_difference = mission_start_time_us - mission_start_time_jp
-print(time_difference)
+# #calculate how much time has elapsed between two telemetry events
+# mission_start_time_jp = datetime.strptime(jp_format, "%Y-%m-%d %H:%M:%S").replace(tzinfo=tokyo_tz)
+# time_difference = mission_start_time_us - mission_start_time_jp
+# print(time_difference)
 
+#Step 23: Environment variables and .env files
+import os
+
+from dotenv import load_dotenv
+
+path = os.environ.get("PATH")   # reads an existing env var
+print(path)
+
+# .get() returns None if missing, instead of crashing - safer than os.environ["PATH"]
+missing = os.environ.get("SOME_VAR_THAT_DOESNT_EXIST")
+print(missing)   # None
+
+
+load_dotenv()   # reads .env and loads its values into os.environ
+
+secret = os.environ.get("SECRET_KEY")
+print(secret)

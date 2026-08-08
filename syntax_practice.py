@@ -217,124 +217,123 @@
 
 
 #12: exception handling — try/except/finally, custom exceptions.
-
 #TRY/EXCEPT + CUSTOM EXCEPTION + CATCHING ANY EXCEPTION WITH 'as e:' + MULTIPLE EXCEPTIONS
-# import jwt
+import os
 
-# SECRET_KEY = "local_secret_32_byte_key_for_testing_purposes"
-# JWT_ALGORITHM = "HS256"
+import jwt
+from dotenv import load_dotenv
 
-# customers_list_roles=[
-#     {"customer_id":"kejfbekf22mm_dddcfdf", "role":"partner"},
-#     {"customer_id":"jkdfdfdeed_6665", "role":"stakeholder"},
-#     {"customer_id":"sfthtrfg0022", "role":"investor"}
-# ]
+load_dotenv()
+SECRET_KEY = os.environ.get("SECRET_KEY")
+JWT_ALGORITHM = "HS256"
 
-# #tuple for Python runtime checking
-# ALLOWED_CUSTOMER_ROLES = ("partner", "stakeholder", "investor")
+customers_list_roles=[
+    {"customer_id":"kejfbekf22mm_dddcfdf", "role":"partner"},
+    {"customer_id":"jkdfdfdeed_6665", "role":"stakeholder"},
+    {"customer_id":"sfthtrfg0022", "role":"investor"}
+]
 
-# system_user=(
-#      {"system_user_id": "kdfkdefabiefkkkkffiWe_dfe", "role": "admin"}
-# )
+#tuple for Python runtime checking
+ALLOWED_CUSTOMER_ROLES = ("partner", "stakeholder", "investor")
 
-# #custom exeception
-# class InvalidTokenRoleError(Exception):
-#     """Raised when a JWT is valid but the role claim is missing or unauthorized."""
-#     pass
+system_user=(
+     {"system_user_id": "kdfkdefabiefkkkkffiWe_dfe", "role": "admin"}
+)
 
-# # decode the role from the token
-# def get_role_from_bearer_token(auth_header: str) -> str:
-#     """
-#     Parses a Bearer token, verifies its signature, and extracts the user role.
-#     Raises a PermissionError if the token is missing, invalid, or expired.
-#     """
-#     # 1. Verify the header presence and 'Bearer ' format
-#     if not auth_header or not auth_header.startswith("Bearer "):
-#         raise PermissionError("Invalid or missing Authorization header prefix.")
+#custom exeception
+class InvalidTokenRoleError(Exception):
+    """Raised when a JWT is valid but the role claim is missing or unauthorized."""
+
+# decode the role from the token
+def get_role_from_bearer_token(auth_header: str) -> str:
+    """
+    Parses a Bearer token, verifies its signature, and extracts the user role.
+    Raises a PermissionError if the token is missing, invalid, or expired.
+    """
+    # 1. Verify the header presence and 'Bearer ' format
+    if not auth_header or not auth_header.startswith("Bearer "):
+        raise PermissionError("Invalid or missing Authorization header prefix.")
     
-#     # 2. Extract the raw token string (removes 'Bearer ')
-#     token = auth_header.split(" ")[1]
+    # 2. Extract the raw token string (removes 'Bearer ')
+    token = auth_header.split(" ")[1]
     
-#     try:
-#         # 3. Decode the token using server's secret key
-#         payload = jwt.decode(token, SECRET_KEY, algorithms=[JWT_ALGORITHM])
+    try:
+        # 3. Decode the token using server's secret key
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[JWT_ALGORITHM])
         
-#         # 4. Extract and return the role attribute from the token payload
-#         user_role = payload.get("role")
-#         if not user_role:
-#                 raise InvalidTokenRoleError("Token payload is missing a 'role' claim.")        
-#         return user_role
+        # 4. Extract and return the role attribute from the token payload
+        user_role = payload.get("role")
+        if not user_role:
+                raise InvalidTokenRoleError("Token payload is missing a 'role' claim.")        
+        return user_role
         
-#     except jwt.ExpiredSignatureError:
-#         raise PermissionError("The provided token has expired.")
-#     except jwt.InvalidTokenError:
-#         raise PermissionError("The provided token is invalid or tampered with.")
+    except jwt.ExpiredSignatureError:
+        raise PermissionError("The provided token has expired.")
+    except jwt.InvalidTokenError:
+        raise PermissionError("The provided token is invalid or tampered with.")
 
 
-# def changeCustomerRole(requested_customer_id: str, new_role:str, auth_header:str):
-#     #check permissions for the system user
-#     try:
-#        current_sys_user_role = get_role_from_bearer_token(auth_header)
-#     except PermissionError as e:
-#         print(f"Access Denied: {e}")
-#         return
+def changeCustomerRole(requested_customer_id: str, new_role:str, auth_header:str):
+    #check permissions for the system user
+    try:
+       current_sys_user_role = get_role_from_bearer_token(auth_header)
+    except PermissionError as e:
+        print(f"Access Denied: {e}")
+        return
 
-#     if current_sys_user_role != "admin":
-#         print("Access denied: User is not an admin.")
-#         return 
+    if current_sys_user_role != "admin":
+        print("Access denied: User is not an admin.")
+        return 
 
-#     # User is admin, proceed with changes
-#     # RUNTIME GUARD CLAUSE: Verify the incoming new_role is valid before looping
-#     if new_role not in ALLOWED_CUSTOMER_ROLES:
-#         print(f"Error: '{new_role}' is not a valid role options.")
-#         return
+    # User is admin, proceed with changes
+    # RUNTIME GUARD CLAUSE: Verify the incoming new_role is valid before looping
+    if new_role not in ALLOWED_CUSTOMER_ROLES:
+        print(f"Error: '{new_role}' is not a valid role options.")
+        return
 
-#     # Process the update since the role is safe
-#     for customer in customers_list_roles:
-#         if customer["customer_id"] == requested_customer_id:
-#             customer["role"] = new_role
-#             print(f"Role is changed successfully to {new_role}")
-#             break
-#     else:
-#         print("Role not found (Customer ID matches nothing)")
+    # Process the update since the role is safe
+    for customer in customers_list_roles:
+        if customer["customer_id"] == requested_customer_id:
+            customer["role"] = new_role
+            print(f"Role is changed successfully to {new_role}")
+            break
+    else:
+        print("Role not found (Customer ID matches nothing)")
 
-# # 4. GENERATING A VALID TOKEN FOR TESTING
-# system_user = {
-#     "system_user_id": "kdfkdefabiefkkkffiWe_dfe", 
-#     "role": "admin"
-# }
+# 4. GENERATING A VALID TOKEN FOR TESTING
+system_user = {
+    "system_user_id": "kdfkdefabiefkkkffiWe_dfe", 
+    "role": "admin"
+}
 
-# # Generate a fresh token signed with our static key
-# GENERATED_JWT = jwt.encode(system_user, SECRET_KEY, algorithm=JWT_ALGORITHM)
-# test_auth_header = f"Bearer {GENERATED_JWT}"
+# Generate a fresh token signed with our static key
+GENERATED_JWT = jwt.encode(system_user, SECRET_KEY, algorithm=JWT_ALGORITHM)
+test_auth_header = f"Bearer {GENERATED_JWT}"
 
-# print("1. Check for JWT Generation:")
-# print(test_auth_header)
+print("1. Check for JWT Generation:")
+print(test_auth_header)
 
-# print("\n2. Customers list before:")
-# print(customers_list_roles)
+print("\n2. Customers list before:")
+print(customers_list_roles)
 
-# print("\n3. Attempting Role Change:")
-# # Pass the freshly generated token that matches our SECRET_KEY
-# changeCustomerRole("kejfbekf22mm_dddcfdf", "stakeholder", test_auth_header)
+print("\n3. Attempting Role Change:")
+# Pass the freshly generated token that matches our SECRET_KEY
+changeCustomerRole("kejfbekf22mm_dddcfdf", "stakeholder", test_auth_header)
 
-# print("\n4. Customers list after:")
-# print(customers_list_roles)
+print("\n4. Customers list after:")
+print(customers_list_roles)
 
-# # Test with a deliberately broken token
-# bad_auth_header = "Bearer this.is.not.a.valid.jwt"
-# changeCustomerRole("kejfbekf22mm_dddcfdf", "stakeholder", bad_auth_header)
-
-
-# #FINALLY
-# try:
-#     f = open("test_users_list.csv", "x")
-#     data = f.write("text")
-# except FileExistsError:
-#     print("File already generated")
-# finally:
-#     print("Check completed")
+# Test with a deliberately broken token
+bad_auth_header = "Bearer this.is.not.a.valid.jwt"
+changeCustomerRole("kejfbekf22mm_dddcfdf", "stakeholder", bad_auth_header)
 
 
-#Step 13: OOP - classes, __init__, inheritance, super()
+#FINALLY
+try:
+    f = open("test_users_list.csv", "x")
+    data = f.write("text")
+except FileExistsError:
+    print("File already generated")
+finally:
+    print("Check completed")
 
