@@ -210,80 +210,116 @@
 #Step 20: requirements.txt vs pyproject.toml, currently using .toml, added uv add --dev pytest
 
 #Step 21: Regular expressions (re module) — log-parsing practice
-import re
+# import re
 
-#Find all lines containing ERROR
-print("ERRORS:")
-with open("mobile_app_crash.txt", "r") as logs_file:
-       logs_records = logs_file.readlines()
-       for line in logs_records:
-          all_lines_with_errors = re.findall("ERROR", line)
-          if all_lines_with_errors:
-               print(line)
-
-
-#Extract all timestamps from the log
-print("ALL TIMESTAMPS:")
-for line in logs_records:
-     all_timestamps = re.findall(r"(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2})", line)
-     if all_timestamps:
-          print(line.strip())
+# #Find all lines containing ERROR
+# print("ERRORS:")
+# with open("mobile_app_crash.txt", "r") as logs_file:
+#        logs_records = logs_file.readlines()
+#        for line in logs_records:
+#           all_lines_with_errors = re.findall("ERROR", line)
+#           if all_lines_with_errors:
+#                print(line)
 
 
-print("\n") #for terminal view
-
-#Extract the severity level and message separately using capture groups
-import re
-from enum import IntEnum
-
-
-class Severity(IntEnum):
-    FATAL = 1
-    ERROR = 2
-    WARN = 3
-    INFO = 4
-    DEBUG = 5
-
-     #1. temporary container to collect the matches (because regex can't be sorted directly)
-collected_matches = []
-
-pattern = r"^\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}\] \[(\w+)\] \[(\w+)\] (.*)"
-
-     # 2. Extract and store the data fields
-for line in logs_records:
-     errors_data = re.search(pattern, line)
-     if errors_data:
-          level, agent, explanation = errors_data.groups()
-          # Store them grouped together as a tuple inside our list
-          collected_matches.append((level, agent, explanation))
-
-     # 3. Sort the collected list based on SEVERITY_PRIORITY 
-     # (row[0] checks the 'level' string like "INFO" or "ERROR" against  map)
-collected_matches.sort(key=lambda row: Severity[row[0]])
-
-     # 4. Print out final sorted data
-print("SEVERITY LEVELS (SORTED):")
-for level, agent, explanation in collected_matches:
-     print(f"Level: {level} | Agent: {agent} | Message: {explanation}")
+# #Extract all timestamps from the log
+# print("ALL TIMESTAMPS:")
+# for line in logs_records:
+#      all_timestamps = re.findall(r"(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2})", line)
+#      if all_timestamps:
+#           print(line.strip())
 
 
-print("\n")
+# print("\n") #for terminal view
+
+# #Extract the severity level and message separately using capture groups
+# import re
+# from enum import IntEnum
+
+
+# class Severity(IntEnum):
+#     FATAL = 1
+#     ERROR = 2
+#     WARN = 3
+#     INFO = 4
+#     DEBUG = 5
+
+#      #1. temporary container to collect the matches (because regex can't be sorted directly)
+# collected_matches = []
+
+# pattern = r"^\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}\] \[(\w+)\] \[(\w+)\] (.*)"
+
+#      # 2. Extract and store the data fields
+# for line in logs_records:
+#      errors_data = re.search(pattern, line)
+#      if errors_data:
+#           level, agent, explanation = errors_data.groups()
+#           # Store them grouped together as a tuple inside our list
+#           collected_matches.append((level, agent, explanation))
+
+#      # 3. Sort the collected list based on SEVERITY_PRIORITY 
+#      # (row[0] checks the 'level' string like "INFO" or "ERROR" against  map)
+# collected_matches.sort(key=lambda row: Severity[row[0]])
+
+#      # 4. Print out final sorted data
+# print("SEVERITY LEVELS (SORTED):")
+# for level, agent, explanation in collected_matches:
+#      print(f"Level: {level} | Agent: {agent} | Message: {explanation}")
+
+
+# print("\n")
   
-#Redact something sensitive (like an IP address or an ID) using re.sub()
-import re
+# #Redact something sensitive (like an IP address or an ID) using re.sub()
+# import re
 
-# Used parentheses () to create a capture group for "User ID: " so we can keep it
-pattern_id = r"(User\s+ID:\s*)(\d+)"
-extracted_lines = []
+# # Used parentheses () to create a capture group for "User ID: " so we can keep it
+# pattern_id = r"(User\s+ID:\s*)(\d+)"
+# extracted_lines = []
 
-with open("mobile_app_crash.txt", "r", encoding="utf-8") as file:
-    for line in file:
-        if re.search(pattern_id, line):
-            extracted_lines.append(line.strip())
+# with open("mobile_app_crash.txt", "r", encoding="utf-8") as file:
+#     for line in file:
+#         if re.search(pattern_id, line):
+#             extracted_lines.append(line.strip())
 
-# Loop through and mask every extracted line
-for match_line in extracted_lines:
-    # \1 pulls back the text from the first capture group (User ID: ) 
-    # and only replaces the digits with XXXXXX
-    masked_line = re.sub(pattern_id, r"\1XXXXXX", match_line)
-    print(masked_line)
+# # Loop through and mask every extracted line
+# for match_line in extracted_lines:
+#     # \1 pulls back the text from the first capture group (User ID: ) 
+#     # and only replaces the digits with XXXXXX
+#     masked_line = re.sub(pattern_id, r"\1XXXXXX", match_line)
+#     print(masked_line)
+
+#Step 22: datetime and time handling, timezones
+#power management controller, telemetry validation tool (simplified)
+from _zoneinfo import ZoneInfo
+from datetime import UTC, datetime
+
+#record the current time in UTC 
+utc_now = datetime.now(UTC)   # timezone-aware
+print(utc_now)
+
+#convert that timestamp into two other timezones - one for tech team, one for the aircarft that's in another country on a mission
+los_angeles_tz = ZoneInfo("America/Los_Angeles")
+los_angeles_time = datetime.now(los_angeles_tz)
+tokyo_tz = ZoneInfo("Asia/Tokyo")
+tokyo_time = datetime.now(tokyo_tz)
+print(los_angeles_time)
+print(tokyo_time)
+
+#store timestamps in a standardized log format (string)
+custom_format_time = utc_now.strftime("%d-%m-%Y %H:%M:%S")
+print(custom_format_time)
+
+jp_format = tokyo_time.strftime("%Y-%m-%d %H:%M:%S")
+mil_format = los_angeles_time.strftime("%m-%d-%Y %H%M")
+print(jp_format)
+print(mil_format)
+
+#read a timestamp back from a log entry (string back into a datetime)
+mission_start_time_us = datetime.strptime(mil_format, "%m-%d-%Y %H%M").replace(tzinfo=los_angeles_tz)
+print(f"Start at: {mission_start_time_us.hour:02d}{mission_start_time_us.minute:02d}")
+      
+#calculate how much time has elapsed between two telemetry events
+mission_start_time_jp = datetime.strptime(jp_format, "%Y-%m-%d %H:%M:%S").replace(tzinfo=tokyo_tz)
+time_difference = mission_start_time_us - mission_start_time_jp
+print(time_difference)
+
