@@ -1,5 +1,5 @@
 # #Step 13: Object-Oriented Python — classes, __init__, inheritance, super()
-# # for info: 
+# # for info:
 # # A function is standalone, not attached to any class
 # # A method is a function defined inside a class, and it operates on an instance via self
 
@@ -78,13 +78,13 @@
 #         end_test_time = time.time()
 #         print(f"{func.__name__} executed {end_test_time - start_test_time:.4f} seconds")
 #         return logged_test_time
-#     return time_wrapper 
+#     return time_wrapper
 
 # #decorator for imported func
 # check_fuel_time_decorator = check_test_time_decorator(check_fuel)
 
 # #decorator for other tests
-# @check_test_time_decorator	
+# @check_test_time_decorator
 # def check_registration():
 #     time.sleep(5.07)
 #     return "finished"
@@ -106,7 +106,7 @@
 # def logging_for_tests_decorator(func):
 #     def wrapper(*args, **kwargs):
 #         print(f"Processing {func.__name__} with args={args}, kwargs={kwargs}")
-#         data = func(*args, **kwargs)   
+#         data = func(*args, **kwargs)
 #         print(f"{func.__name__}, result: {data}")
 #         return data
 #     return wrapper
@@ -145,8 +145,8 @@
 
 # func_poor_network()
 
-#Step 17: Context managers — with statements, writing own using __enter__/__exit__
-#custom context manager class, logs entry/exit
+# Step 17: Context managers — with statements, writing own using __enter__/__exit__
+# custom context manager class, logs entry/exit
 # import json
 
 
@@ -191,8 +191,8 @@
 # print(next(xenon_lines))
 # print(next(xenon_lines))
 
-#Step 19: Type hints (typing module) 
-#added hints in the fuel_checks.py
+# Step 19: Type hints (typing module)
+# added hints in the fuel_checks.py
 
 # from utils.fuel_checks import (
 #     get_all_avionics_subsystems,
@@ -207,47 +207,50 @@
 # print(get_all_avionics_subsystems())
 
 
-#Step 20: requirements.txt vs pyproject.toml, currently using .toml, added uv add --dev pytest
+# Step 20: requirements.txt vs pyproject.toml, currently using .toml, added uv add --dev pytest
 
-#Step 21: Regular expressions (re module) — log-parsing practice
+# Step 21: Regular expressions (re module) — log-parsing practice
 import logging
 import re
 from enum import IntEnum
 
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s -%(name)s - %(levelname)s - %(message)s", 
+    format="%(asctime)s -%(name)s - %(levelname)s - %(message)s",
     handlers=[
-        logging.FileHandler('test_run.log'),
-        logging.StreamHandler()   # also prints to console
-    ]
+        logging.FileHandler("test_run.log"),
+        logging.StreamHandler(),  # also prints to console
+    ],
 )
 logger = logging.getLogger(__name__)
-#Find all lines containing ERROR
-logger.info('SEARCHING ERRORS...')
+# Find all lines containing ERROR
+logger.info("SEARCHING ERRORS...")
 with open("no_timestamps.txt", "r") as logs_file:
-       logs_records = logs_file.readlines()
-       for line in logs_records:
-          all_lines_with_errors = re.findall("ERROR", line)
-          if all_lines_with_errors:
-               logger.warning('ERRORS FOUND')
-               timestamp_for_errors = re.findall(r"(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2})", line)
-               if not timestamp_for_errors:
-                   logger.error('No timestamp for the record')
-               logger.info(line)                                          # matched error line
-       
+    logs_records = logs_file.readlines()
+    for line in logs_records:
+        all_lines_with_errors = re.findall("ERROR", line)
+        if all_lines_with_errors:
+            logger.warning("ERRORS FOUND")
+            timestamp_for_errors = re.findall(
+                r"(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2})", line
+            )
+            if not timestamp_for_errors:
+                logger.error("No timestamp for the record")
+            logger.info(line)  # matched error line
+
 logger.info("FINISHED SEARCHING ERRORS")
 
-#Extract all timestamps from the log
+# Extract all timestamps from the log
 logger.info("EXTRACTING ALL TIMESTAMPS:")
 for line in logs_records:
-     logger.info("Processing items in the loop")
-     all_timestamps = re.findall(r"(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2})", line)
-     if all_timestamps:
-          logger.debug(line.strip())                                  
+    logger.info("Processing items in the loop")
+    all_timestamps = re.findall(r"(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2})", line)
+    if all_timestamps:
+        logger.debug(line.strip())
 logger.info("ALL TIMESTAMPS EXTRACTED")
 
-#Extract the severity level and message separately using capture groups
+
+# Extract the severity level and message separately using capture groups
 class Severity(IntEnum):
     FATAL = 1
     ERROR = 2
@@ -255,29 +258,31 @@ class Severity(IntEnum):
     INFO = 4
     DEBUG = 5
 
-     #1. temporary container to collect the matches (because regex can't be sorted directly)
+    # 1. temporary container to collect the matches (because regex can't be sorted directly)
+
+
 collected_matches = []
 
 pattern = r"^\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}\] \[(\w+)\] \[(\w+)\] (.*)"
 
-     # 2. Extract and store the data fields
+# 2. Extract and store the data fields
 for line in logs_records:
-     errors_data = re.search(pattern, line)
-     if errors_data:
-          level, agent, explanation = errors_data.groups()
-          # Store them grouped together as a tuple inside our list
-          collected_matches.append((level, agent, explanation))
+    errors_data = re.search(pattern, line)
+    if errors_data:
+        level, agent, explanation = errors_data.groups()
+        # Store them grouped together as a tuple inside our list
+        collected_matches.append((level, agent, explanation))
 
-     # 3. Sort the collected list based on SEVERITY_PRIORITY 
-     # (row[0] checks the 'level' string like "INFO" or "ERROR" against  map)
+    # 3. Sort the collected list based on SEVERITY_PRIORITY
+    # (row[0] checks the 'level' string like "INFO" or "ERROR" against  map)
 collected_matches.sort(key=lambda row: Severity[row[0]])
 
-     # 4. Print out final sorted data
+# 4. Print out final sorted data
 logger.info("SEVERITY LEVELS (SORTED):")
 for level, agent, explanation in collected_matches:
     logger.info(f"Level: {level} | Agent: {agent} | Message: {explanation}")
-  
-#Redact something sensitive (like an IP address or an ID) using re.sub()
+
+# Redact something sensitive (like an IP address or an ID) using re.sub()
 # Used parentheses () to create a capture group for "User ID: " so we can keep it
 pattern_id = r"(User\s+ID:\s*)(\d+)"
 extracted_lines = []
@@ -289,17 +294,17 @@ with open("mobile_app_crash.txt", "r", encoding="utf-8") as file:
 
 # Loop through and mask every extracted line
 for match_line in extracted_lines:
-    # \1 pulls back the text from the first capture group (User ID: ) 
+    # \1 pulls back the text from the first capture group (User ID: )
     # and only replaces the digits with XXXXXX
     masked_line = re.sub(pattern_id, r"\1XXXXXX", match_line)
     logger.info(masked_line)
 
-#Step 22: datetime and time handling, timezones
-#power management controller, telemetry validation tool (simplified)
+# Step 22: datetime and time handling, timezones
+# power management controller, telemetry validation tool (simplified)
 # from _zoneinfo import ZoneInfo
 # from datetime import UTC, datetime
 
-# #record the current time in UTC 
+# #record the current time in UTC
 # utc_now = datetime.now(UTC)   # timezone-aware
 # print(utc_now)
 
@@ -323,13 +328,13 @@ for match_line in extracted_lines:
 # #read a timestamp back from a log entry (string back into a datetime)
 # mission_start_time_us = datetime.strptime(mil_format, "%m-%d-%Y %H%M").replace(tzinfo=los_angeles_tz)
 # print(f"Start at: {mission_start_time_us.hour:02d}{mission_start_time_us.minute:02d}")
-      
+
 # #calculate how much time has elapsed between two telemetry events
 # mission_start_time_jp = datetime.strptime(jp_format, "%Y-%m-%d %H:%M:%S").replace(tzinfo=tokyo_tz)
 # time_difference = mission_start_time_us - mission_start_time_jp
 # print(time_difference)
 
-#Step 23: Environment variables and .env files
+# Step 23: Environment variables and .env files
 # import os
 
 # from dotenv import load_dotenv
@@ -347,5 +352,5 @@ for match_line in extracted_lines:
 # secret = os.environ.get("SECRET_KEY")
 # print(secret)
 
-#Step 24: Logging module — replacing print() with proper logging
-#See changes in the existing code in the step 21
+# Step 24: Logging module — replacing print() with proper logging
+# See changes in the existing code in the step 21

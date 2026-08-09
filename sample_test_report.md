@@ -19,7 +19,7 @@
 def check_fuel(fuel_level: float):
     if fuel_level >= 500:
         print("Full")
-    else: 
+    else:
         print("Needs fuel")
 ```
 
