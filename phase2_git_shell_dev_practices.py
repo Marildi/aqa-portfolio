@@ -27,3 +27,5 @@
 
 #Step 26: Git branching strategy — feature branches, pull requests, code review etiquette
 #Changes to push from a feature branch to main
+
+#Step 27: README.md — structure, badges, setup instructions
