@@ -24,3 +24,6 @@
 #echo "test" > output.txt     # write (overwrite) to file
 #echo "more" >> output.txt    # append to file
 #command 2>&1                  # redirect errors (stderr) to same place as normal output (stdout)
+
+#Step 26: Git branching strategy — feature branches, pull requests, code review etiquette
+#Changes to push from a feature branch to main
