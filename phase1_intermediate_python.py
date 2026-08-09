@@ -210,83 +210,89 @@
 #Step 20: requirements.txt vs pyproject.toml, currently using .toml, added uv add --dev pytest
 
 #Step 21: Regular expressions (re module) — log-parsing practice
-# import re
+import logging
+import re
+from enum import IntEnum
 
-# #Find all lines containing ERROR
-# print("ERRORS:")
-# with open("mobile_app_crash.txt", "r") as logs_file:
-#        logs_records = logs_file.readlines()
-#        for line in logs_records:
-#           all_lines_with_errors = re.findall("ERROR", line)
-#           if all_lines_with_errors:
-#                print(line)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s -%(name)s - %(levelname)s - %(message)s", 
+    handlers=[
+        logging.FileHandler('test_run.log'),
+        logging.StreamHandler()   # also prints to console
+    ]
+)
+logger = logging.getLogger(__name__)
+#Find all lines containing ERROR
+logger.info('SEARCHING ERRORS...')
+with open("no_timestamps.txt", "r") as logs_file:
+       logs_records = logs_file.readlines()
+       for line in logs_records:
+          all_lines_with_errors = re.findall("ERROR", line)
+          if all_lines_with_errors:
+               logger.warning('ERRORS FOUND')
+               timestamp_for_errors = re.findall(r"(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2})", line)
+               if not timestamp_for_errors:
+                   logger.error('No timestamp for the record')
+               logger.info(line)                                          # matched error line
+       
+logger.info("FINISHED SEARCHING ERRORS")
 
+#Extract all timestamps from the log
+logger.info("EXTRACTING ALL TIMESTAMPS:")
+for line in logs_records:
+     logger.info("Processing items in the loop")
+     all_timestamps = re.findall(r"(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2})", line)
+     if all_timestamps:
+          logger.debug(line.strip())                                  
+logger.info("ALL TIMESTAMPS EXTRACTED")
 
-# #Extract all timestamps from the log
-# print("ALL TIMESTAMPS:")
-# for line in logs_records:
-#      all_timestamps = re.findall(r"(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2})", line)
-#      if all_timestamps:
-#           print(line.strip())
+#Extract the severity level and message separately using capture groups
+class Severity(IntEnum):
+    FATAL = 1
+    ERROR = 2
+    WARN = 3
+    INFO = 4
+    DEBUG = 5
 
+     #1. temporary container to collect the matches (because regex can't be sorted directly)
+collected_matches = []
 
-# print("\n") #for terminal view
+pattern = r"^\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}\] \[(\w+)\] \[(\w+)\] (.*)"
 
-# #Extract the severity level and message separately using capture groups
-# import re
-# from enum import IntEnum
+     # 2. Extract and store the data fields
+for line in logs_records:
+     errors_data = re.search(pattern, line)
+     if errors_data:
+          level, agent, explanation = errors_data.groups()
+          # Store them grouped together as a tuple inside our list
+          collected_matches.append((level, agent, explanation))
 
+     # 3. Sort the collected list based on SEVERITY_PRIORITY 
+     # (row[0] checks the 'level' string like "INFO" or "ERROR" against  map)
+collected_matches.sort(key=lambda row: Severity[row[0]])
 
-# class Severity(IntEnum):
-#     FATAL = 1
-#     ERROR = 2
-#     WARN = 3
-#     INFO = 4
-#     DEBUG = 5
-
-#      #1. temporary container to collect the matches (because regex can't be sorted directly)
-# collected_matches = []
-
-# pattern = r"^\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}\] \[(\w+)\] \[(\w+)\] (.*)"
-
-#      # 2. Extract and store the data fields
-# for line in logs_records:
-#      errors_data = re.search(pattern, line)
-#      if errors_data:
-#           level, agent, explanation = errors_data.groups()
-#           # Store them grouped together as a tuple inside our list
-#           collected_matches.append((level, agent, explanation))
-
-#      # 3. Sort the collected list based on SEVERITY_PRIORITY 
-#      # (row[0] checks the 'level' string like "INFO" or "ERROR" against  map)
-# collected_matches.sort(key=lambda row: Severity[row[0]])
-
-#      # 4. Print out final sorted data
-# print("SEVERITY LEVELS (SORTED):")
-# for level, agent, explanation in collected_matches:
-#      print(f"Level: {level} | Agent: {agent} | Message: {explanation}")
-
-
-# print("\n")
+     # 4. Print out final sorted data
+logger.info("SEVERITY LEVELS (SORTED):")
+for level, agent, explanation in collected_matches:
+    logger.info(f"Level: {level} | Agent: {agent} | Message: {explanation}")
   
-# #Redact something sensitive (like an IP address or an ID) using re.sub()
-# import re
+#Redact something sensitive (like an IP address or an ID) using re.sub()
+# Used parentheses () to create a capture group for "User ID: " so we can keep it
+pattern_id = r"(User\s+ID:\s*)(\d+)"
+extracted_lines = []
 
-# # Used parentheses () to create a capture group for "User ID: " so we can keep it
-# pattern_id = r"(User\s+ID:\s*)(\d+)"
-# extracted_lines = []
+with open("mobile_app_crash.txt", "r", encoding="utf-8") as file:
+    for line in file:
+        if re.search(pattern_id, line):
+            extracted_lines.append(line.strip())
 
-# with open("mobile_app_crash.txt", "r", encoding="utf-8") as file:
-#     for line in file:
-#         if re.search(pattern_id, line):
-#             extracted_lines.append(line.strip())
-
-# # Loop through and mask every extracted line
-# for match_line in extracted_lines:
-#     # \1 pulls back the text from the first capture group (User ID: ) 
-#     # and only replaces the digits with XXXXXX
-#     masked_line = re.sub(pattern_id, r"\1XXXXXX", match_line)
-#     print(masked_line)
+# Loop through and mask every extracted line
+for match_line in extracted_lines:
+    # \1 pulls back the text from the first capture group (User ID: ) 
+    # and only replaces the digits with XXXXXX
+    masked_line = re.sub(pattern_id, r"\1XXXXXX", match_line)
+    logger.info(masked_line)
 
 #Step 22: datetime and time handling, timezones
 #power management controller, telemetry validation tool (simplified)
@@ -324,19 +330,22 @@
 # print(time_difference)
 
 #Step 23: Environment variables and .env files
-import os
+# import os
 
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
-path = os.environ.get("PATH")   # reads an existing env var
-print(path)
+# path = os.environ.get("PATH")   # reads an existing env var
+# print(path)
 
-# .get() returns None if missing, instead of crashing - safer than os.environ["PATH"]
-missing = os.environ.get("SOME_VAR_THAT_DOESNT_EXIST")
-print(missing)   # None
+# # .get() returns None if missing, instead of crashing - safer than os.environ["PATH"]
+# missing = os.environ.get("SOME_VAR_THAT_DOESNT_EXIST")
+# print(missing)   # None
 
 
-load_dotenv()   # reads .env and loads its values into os.environ
+# load_dotenv()   # reads .env and loads its values into os.environ
 
-secret = os.environ.get("SECRET_KEY")
-print(secret)
+# secret = os.environ.get("SECRET_KEY")
+# print(secret)
+
+#Step 24: Logging module — replacing print() with proper logging
+#See changes in the existing code in the step 21
