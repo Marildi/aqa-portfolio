@@ -29,3 +29,5 @@
 #Changes to push from a feature branch to main
 
 #Step 27: README.md — structure, badges, setup instructions
+
+#Step 28: Markdown formatting — you'll write test reports and docs constantly
