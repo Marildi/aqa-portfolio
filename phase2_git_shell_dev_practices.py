@@ -31,3 +31,7 @@
 # Step 27: README.md — structure, badges, setup instructions
 
 # Step 28: Markdown formatting — you'll write test reports and docs constantly
+
+# Step 29: Pre-commit hooks — automatic linting/formatting before every commit
+
+# Step 30: black / ruff / mypy — static type checking

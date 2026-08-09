@@ -1,8 +1,7 @@
 def check_fuel(fuel_level: float):
-    if fuel_level >= 500:
-        print("Full")
-    else:
-        print("Needs fuel")
+    is_full = fuel_level >= 500
+    print("Full" if is_full else "Needs fuel")
+    return is_full
 
 
 def check_range(fuel_type: str):
