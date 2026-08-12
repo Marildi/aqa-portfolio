@@ -1,3 +1,7 @@
+import os
+
+import pytest
+
 from utils.fuel_checks import check_fuel
 
 
@@ -30,3 +34,29 @@ def test_check_fuel_zero():
 
 def test_check_fuel_negative():
     assert not check_fuel(-50)
+
+
+# 33
+@pytest.fixture(scope="module")
+def temp_results_file():
+    filename = "temp_file.csv"
+    print("\nSetup: creating temp file")
+    with open(filename, "w") as f:
+        f.write("test_name,status\n")
+        f.write("test_login,Passed\n")
+        f.write("test_logout,Failed\n")
+    yield filename  # give the test just the filename/path
+    print("\nTeardown: deleting temp file")
+    os.remove(filename)  # cleanup
+
+
+def test_file_contains_failed_status(temp_results_file):
+    with open(temp_results_file, "r") as f:
+        content = f.read()
+    assert "Failed" in content
+
+
+def test_file_contains_passed_status(temp_results_file):
+    with open(temp_results_file, "r") as f:
+        content = f.read()
+    assert "Passed" in content

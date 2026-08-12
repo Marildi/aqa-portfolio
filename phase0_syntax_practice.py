@@ -118,7 +118,7 @@
 
 # print(is_weight_maximum_reached(50.56))
 
-# LIST/DICT COMPREHENSIONS
+# Step 11: LIST/DICT COMPREHENSIONS
 # Basic lists
 # male_guests = ["Goodchild", "Bashire"]     # list - ordered, allows duplicates
 # male_guests = {"Goodchild", "Bashire"}     # set - unordered, unique only

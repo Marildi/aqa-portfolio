@@ -1,0 +1,42 @@
+2026-08-11 06:00:28,405 -__main__ - INFO - SEARCHING ERRORS...
+2026-08-11 06:00:28,405 -__main__ - WARNING - ERRORS FOUND
+2026-08-11 06:00:28,405 -__main__ - ERROR - No timestamp for the record
+2026-08-11 06:00:28,405 -__main__ - INFO - [ERROR] [SecureStorage] Encryption token storage operation failed: KeychainErrorDomain (Status: -25300 / errSecItemNotFound)
+
+2026-08-11 06:00:28,405 -__main__ - INFO - FINISHED SEARCHING ERRORS
+2026-08-11 06:00:28,405 -__main__ - INFO - EXTRACTING ALL TIMESTAMPS:
+2026-08-11 06:00:28,405 -__main__ - INFO - Processing items in the loop
+2026-08-11 06:00:28,405 -__main__ - INFO - Processing items in the loop
+2026-08-11 06:00:28,405 -__main__ - INFO - Processing items in the loop
+2026-08-11 06:00:28,405 -__main__ - INFO - Processing items in the loop
+2026-08-11 06:00:28,405 -__main__ - INFO - Processing items in the loop
+2026-08-11 06:00:28,405 -__main__ - INFO - Processing items in the loop
+2026-08-11 06:00:28,405 -__main__ - INFO - Processing items in the loop
+2026-08-11 06:00:28,405 -__main__ - INFO - Processing items in the loop
+2026-08-11 06:00:28,405 -__main__ - INFO - Processing items in the loop
+2026-08-11 06:00:28,405 -__main__ - INFO - Processing items in the loop
+2026-08-11 06:00:28,405 -__main__ - INFO - Processing items in the loop
+2026-08-11 06:00:28,405 -__main__ - INFO - Processing items in the loop
+2026-08-11 06:00:28,405 -__main__ - INFO - Processing items in the loop
+2026-08-11 06:00:28,406 -__main__ - INFO - Processing items in the loop
+2026-08-11 06:00:28,406 -__main__ - INFO - Processing items in the loop
+2026-08-11 06:00:28,406 -__main__ - INFO - Processing items in the loop
+2026-08-11 06:00:28,406 -__main__ - INFO - Processing items in the loop
+2026-08-11 06:00:28,406 -__main__ - INFO - Processing items in the loop
+2026-08-11 06:00:28,406 -__main__ - INFO - Processing items in the loop
+2026-08-11 06:00:28,406 -__main__ - INFO - Processing items in the loop
+2026-08-11 06:00:28,406 -__main__ - INFO - Processing items in the loop
+2026-08-11 06:00:28,406 -__main__ - INFO - Processing items in the loop
+2026-08-11 06:00:28,406 -__main__ - INFO - Processing items in the loop
+2026-08-11 06:00:28,406 -__main__ - INFO - Processing items in the loop
+2026-08-11 06:00:28,406 -__main__ - INFO - Processing items in the loop
+2026-08-11 06:00:28,406 -__main__ - INFO - Processing items in the loop
+2026-08-11 06:00:28,406 -__main__ - INFO - Processing items in the loop
+2026-08-11 06:00:28,406 -__main__ - INFO - Processing items in the loop
+2026-08-11 06:00:28,406 -__main__ - INFO - Processing items in the loop
+2026-08-11 06:00:28,406 -__main__ - INFO - Processing items in the loop
+2026-08-11 06:00:28,406 -__main__ - INFO - Processing items in the loop
+2026-08-11 06:00:28,406 -__main__ - INFO - Processing items in the loop
+2026-08-11 06:00:28,406 -__main__ - INFO - ALL TIMESTAMPS EXTRACTED
+2026-08-11 06:00:28,406 -__main__ - INFO - SEVERITY LEVELS (SORTED):
+2026-08-11 06:00:28,407 -__main__ - INFO - User ID:        XXXXXX
