@@ -1,4 +1,6 @@
-def check_fuel(fuel_level: float):
+def check_fuel(fuel_level: float) -> bool:
+    if not isinstance(fuel_level, (int, float)):
+        raise TypeError(f"fuel_level must be numeric, got {type(fuel_level).__name__}")
     is_full = fuel_level >= 500
     print("Full" if is_full else "Needs fuel")
     return is_full
