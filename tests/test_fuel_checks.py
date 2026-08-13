@@ -147,14 +147,33 @@
 # created conftest.py, checked that it works without import
 
 # 37: Mocking with unittest.mock and pytest-mock
-def get_fighterjet_telemetry(get_latest_by_api):
-    dataset = get_latest_by_api.fetch("Speed")
-    return dataset["Speed"]
+# def get_fighterjet_telemetry(get_latest_by_api):
+#     dataset = get_latest_by_api.fetch("Speed")
+#     return dataset["Speed"]
 
 
-def test_check_telemetry(mocker):
-    mocked_dataset = mocker.Mock()
-    mocked_dataset.fetch.return_value = {"Speed": 5000}
+# def test_check_telemetry(mocker):
+#     mocked_dataset = mocker.Mock()
+#     mocked_dataset.fetch.return_value = {"Speed": 5000}
 
-    result = get_fighterjet_telemetry(mocked_dataset)
-    assert result == 5000
+#     result = get_fighterjet_telemetry(mocked_dataset)
+#     assert result == 5000
+
+# Step 38: test data management — fixtures vs factories (factory_boy).
+import factory
+
+
+class FighterJets(factory.Factory):
+    class Meta:
+        model = dict
+
+    name = factory.Sequence(lambda n: f"Jet_{n}")
+    classification = "fighter"
+    secret_level = "top clearance"
+
+
+advanced_jet = FighterJets(secret_level="only few people know")
+
+fighter_jets = [FighterJets() for jet in range(50)]
+print(fighter_jets)
+print(advanced_jet)
