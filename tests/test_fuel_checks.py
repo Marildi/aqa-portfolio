@@ -160,20 +160,38 @@
 #     assert result == 5000
 
 # Step 38: test data management — fixtures vs factories (factory_boy).
-import factory
+# import factory
 
 
-class FighterJets(factory.Factory):
-    class Meta:
-        model = dict
+# class FighterJets(factory.Factory):
+#     class Meta:
+#         model = dict
 
-    name = factory.Sequence(lambda n: f"Jet_{n}")
-    classification = "fighter"
-    secret_level = "top clearance"
+#     name = factory.Sequence(lambda n: f"Jet_{n}")
+#     classification = "fighter"
+#     secret_level = "top clearance"
 
 
-advanced_jet = FighterJets(secret_level="only few people know")
+# advanced_jet = FighterJets(secret_level="only few people know")
 
-fighter_jets = [FighterJets() for jet in range(50)]
-print(fighter_jets)
-print(advanced_jet)
+# fighter_jets = [FighterJets() for jet in range(50)]
+# print(fighter_jets)
+# print(advanced_jet)
+
+# Step 39: assertion libraries — plain assert vs pytest's rich assertions.
+import pytest
+
+
+# difference in Classification vs classification
+def test_jet_data():
+    result = {"name": "Jet_1", "Classification": "bomber"}
+    expected = {"name": "Jet_1", "classification": "bomber"}
+    assert result == expected
+
+
+# pytest.approx() for floats
+
+
+def test_fuel_check_precision():
+    test_result = 499.999 + 0.001
+    assert test_result == pytest.approx(500)
