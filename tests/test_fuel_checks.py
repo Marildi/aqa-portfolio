@@ -145,3 +145,16 @@
 
 # 36: conftest.py — shared fixtures across a project
 # created conftest.py, checked that it works without import
+
+# 37: Mocking with unittest.mock and pytest-mock
+def get_fighterjet_telemetry(get_latest_by_api):
+    dataset = get_latest_by_api.fetch("Speed")
+    return dataset["Speed"]
+
+
+def test_check_telemetry(mocker):
+    mocked_dataset = mocker.Mock()
+    mocked_dataset.fetch.return_value = {"Speed": 5000}
+
+    result = get_fighterjet_telemetry(mocked_dataset)
+    assert result == 5000
