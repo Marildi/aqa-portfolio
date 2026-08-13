@@ -9,3 +9,4 @@ wheels/
 # Virtual environments
 .venv
 .env .ruff_cache/.mypy_cache/.pytest_cache/htmlcov/.coverage
+allure-results/ report.html
