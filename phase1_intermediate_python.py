@@ -218,14 +218,14 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s -%(name)s - %(levelname)s - %(message)s",
     handlers=[
-        logging.FileHandler("test_run.log"),
+        logging.FileHandler("data/test_run.log"),
         logging.StreamHandler(),  # also prints to console
     ],
 )
 logger = logging.getLogger(__name__)
 # Find all lines containing ERROR
 logger.info("SEARCHING ERRORS...")
-with open("no_timestamps.txt", "r") as logs_file:
+with open("data/no_timestamps.txt", "r") as logs_file:
     logs_records = logs_file.readlines()
     for line in logs_records:
         all_lines_with_errors = re.findall("ERROR", line)
@@ -287,7 +287,7 @@ for level, agent, explanation in collected_matches:
 pattern_id = r"(User\s+ID:\s*)(\d+)"
 extracted_lines = []
 
-with open("mobile_app_crash.txt", "r", encoding="utf-8") as file:
+with open("data/mobile_app_crash.txt", "r", encoding="utf-8") as file:
     for line in file:
         if re.search(pattern_id, line):
             extracted_lines.append(line.strip())

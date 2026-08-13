@@ -234,3 +234,4 @@ def test_get_all_engines_types():
 
 # Step 40: test reporting — pytest-html, and setting up Allure Report.
 # Step 41: Code coverage with pytest-cov
+# Step 42: test organization — folder structure for a real automation framework (tests/, pages/, utils/, data/).
