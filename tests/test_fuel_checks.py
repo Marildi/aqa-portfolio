@@ -1,5 +1,3 @@
-import os
-
 import factory
 import pytest
 
@@ -47,17 +45,17 @@ def test_check_fuel_negative():
 
 # 33
 # to not activate as was moved to separate file - conftest.py in step 36, now can use the calling blocks on their own
-@pytest.fixture(scope="module")
-def temp_results_file():
-    filename = "temp_file.csv"
-    print("\nSetup: creating temp file")
-    with open(filename, "w") as f:
-        f.write("test_name,status\n")
-        f.write("test_login,Passed\n")
-        f.write("test_logout,Failed\n")
-    yield filename  # give the test just the filename/path
-    print("\nTeardown: deleting temp file")
-    os.remove(filename)  # cleanup
+# @pytest.fixture(scope="module")
+# def temp_results_file():
+#     filename = "temp_file.csv"
+#     print("\nSetup: creating temp file")
+#     with open(filename, "w") as f:
+#         f.write("test_name,status\n")
+#         f.write("test_login,Passed\n")
+#         f.write("test_logout,Failed\n")
+#     yield filename  # give the test just the filename/path
+#     print("\nTeardown: deleting temp file")
+#     os.remove(filename)  # cleanup
 
 
 def test_file_contains_failed_status(temp_results_file):
@@ -243,3 +241,6 @@ def test_get_all_engines_types():
 def test_unreliable_connection():
     result = func_poor_network()
     assert result == "Connection established"
+
+
+# Step 44:
