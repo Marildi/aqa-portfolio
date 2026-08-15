@@ -11,6 +11,7 @@ from utils.fuel_checks import (
     get_all_possible_materials,
     get_locations,
 )
+from utils.network_utils import func_poor_network
 
 
 # Equivalence partitioning
@@ -235,3 +236,10 @@ def test_get_all_engines_types():
 # Step 40: test reporting — pytest-html, and setting up Allure Report.
 # Step 41: Code coverage with pytest-cov
 # Step 42: test organization — folder structure for a real automation framework (tests/, pages/, utils/, data/).
+# Step 43: retry logic for flaky tests (pytest-rerunfailures)
+
+
+@pytest.mark.flaky(reruns=3, reruns_delay=1)
+def test_unreliable_connection():
+    result = func_poor_network()
+    assert result == "Connection established"
