@@ -2,6 +2,7 @@
 # import os
 
 import pytest
+import requests
 
 # @pytest.fixture
 # def temp_results_file():
@@ -24,3 +25,11 @@ def temp_results_file(tmp_path_factory):
         f.write("test_logout,Failed\n")
     yield filename
     # no manual cleanup needed - pytest cleans up tmp_path directories automatically
+
+
+@pytest.fixture
+def api_session():
+    session = requests.Session()
+    session.headers.update({"Accept": "application/json"})
+    yield session
+    session.close()

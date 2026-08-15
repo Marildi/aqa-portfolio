@@ -243,4 +243,5 @@ def test_unreliable_connection():
     assert result == "Connection established"
 
 
-# Step 44:
+# Step 44: Step 44: pytest-xdist parallel execution - fix race condition in temp_results_file fixture
+# fixed the fixture un conftest.py
