@@ -46,8 +46,8 @@ aqa-portfolio/
 
 - [x] Phase 0 — Environment & Python Fundamentals
 - [x] Phase 1 — Intermediate Python
-- [ ] Phase 2 — Git, Command Line & Dev Practices (in progress)
-- [ ] Phase 3 — Pytest and Testing Fundamentals
+- [x] Phase 2 — Git, Command Line & Dev Practices (in progress)
+- [x] Phase 3 — Pytest and Testing Fundamentals
 - [ ] Phase 4 — Playwright (Python)
 - [ ] Phase 5 — API Testing
 - [ ] Phase 6 — CI/CD, Docker & Cloud
