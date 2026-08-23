@@ -1,5 +1,4 @@
-# pages/inventory_page.py
-from playwright.sync_api import Page
+from playwright.async_api import Page
 
 
 class InventoryPage:
@@ -22,3 +21,6 @@ class InventoryPage:
         return [
             float(p.text_content().replace("$", "").strip()) for p in price_elements
         ]
+
+    def get_product_count(self) -> int:
+        return self.page.get_by_test_id("inventory-item").count()
