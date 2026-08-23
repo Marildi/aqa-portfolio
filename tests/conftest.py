@@ -33,3 +33,29 @@ def api_session():
     session.headers.update({"Accept": "application/json"})
     yield session
     session.close()
+
+
+@pytest.fixture(scope="session")
+def auth_state(browser):
+    context = browser.new_context()
+    page = context.new_page()
+    page.goto("https://www.saucedemo.com")
+    page.get_by_placeholder("Username").fill("standard_user")
+    page.get_by_placeholder("Password").fill("secret_sauce")
+    page.get_by_role("button", name="Login").click()
+    context.storage_state(path="tests/auth_state.json")
+    context.close()
+    return "tests/auth_state.json"
+
+
+@pytest.fixture(scope="session", autouse=True)
+def configure_test_id(playwright):
+    playwright.selectors.set_test_id_attribute("data-test")
+
+
+@pytest.fixture
+def authenticated_page(browser, auth_state):
+    context = browser.new_context(storage_state=auth_state)
+    page = context.new_page()
+    yield page
+    context.close()
