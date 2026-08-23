@@ -1,4 +1,5 @@
 # Step 54: Authentication handling: storage state reuse (log in once, reuse session across tests) + Step 55: Page Object Model (POM)
+import pytest
 from playwright.sync_api import Page, expect
 
 from pages.inventory_page import InventoryPage
@@ -28,7 +29,10 @@ def test_add_to_cart(authenticated_page):
     assert inventory.is_item_in_cart("sauce-labs-backpack")
 
 
-def test_sorting(authenticated_page):
+# Step 57: Cross-browser testing — Chromium, Firefox, WebKit
+def test_sorting(authenticated_page, browser_name):
+    if browser_name != "chromium":
+        pytest.skip("This feature is Chromium-specific")
     inventory = InventoryPage(authenticated_page)
     inventory.sort_by("Price (low to high)")
 
