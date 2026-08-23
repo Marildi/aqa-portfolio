@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>Weather Widget</h1>
+<div id="result">Loading...</div>
+<script>
+  fetch("https://fake-weather-api.test/api/weather")
+    .then(res => {
+      if (!res.ok) {
+        throw new Error("Server error: " + res.status);
+      }
+      return res.json();
+    })
+    .then(data => {
+      document.getElementById("result").innerText =
+        `Temperature: ${data.temperature}, Condition: ${data.condition}`;
+    })
+    .catch(err => {
+      document.getElementById("result").innerText = "Error loading weather";
+    });
+</script>
+</body>
+</html>
