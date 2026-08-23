@@ -2,9 +2,8 @@
 # 48. Auto-waiting concept — understand why Playwright rarely needs manual sleeps
 # 49. Actions: click, fill, select, hover, drag-and-drop, keyboard/mouse events
 # 50. Assertions with expect() — web-first assertions vs generic assert
-from pathlib import Path
-
-from playwright.sync_api import expect, sync_playwright
+# from pathlib import Path
+# from playwright.sync_api import expect, sync_playwright
 
 # def run():
 #     with sync_playwright() as p:
@@ -154,54 +153,54 @@ from playwright.sync_api import expect, sync_playwright
 # file_upload_run()
 # file_download_run()
 
+
 # Step 52: Network interception — mocking API responses, intercepting requests
 
+# def network_interception_run():
+#     with sync_playwright() as p:
+#         browser = p.chromium.launch(headless=False)
+#         context = browser.new_context()
+#         page = context.new_page()
 
-def network_interception_run():
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False)
-        context = browser.new_context()
-        page = context.new_page()
+#         def mock_weather(route):
+#             route.fulfill(
+#                 status=200,
+#                 content_type="application/json",
+#                 body='{"temperature": 22, "condition": "sunny"}',
+#             )
 
-        def mock_weather(route):
-            route.fulfill(
-                status=200,
-                content_type="application/json",
-                body='{"temperature": 22, "condition": "sunny"}',
-            )
+#         page.route("**/api/weather", mock_weather)
+#         page.goto(f"file://{Path.cwd()}/test_page.html")
 
-        page.route("**/api/weather", mock_weather)
-        page.goto(f"file://{Path.cwd()}/test_page.html")
+#         expect(page.locator("#result")).to_have_text(
+#             "Temperature: 22, Condition: sunny"
+#         )
+#         print(page.locator("#result").text_content())
 
-        expect(page.locator("#result")).to_have_text(
-            "Temperature: 22, Condition: sunny"
-        )
-        print(page.locator("#result").text_content())
-
-        browser.close()
-
-
-network_interception_run()
+#         browser.close()
 
 
-def network_interception_error_run():
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False)
-        context = browser.new_context()
-        page = context.new_page()
-
-        def simulate_server_error(route):
-            route.fulfill(
-                status=500, content_type="text/plain", body="Internal Server Error"
-            )
-
-        page.route("**/api/weather", simulate_server_error)
-        page.goto(f"file://{Path.cwd()}/test_page.html")
-
-        expect(page.locator("#result")).to_have_text("Error loading weather")
-        print(page.locator("#result").text_content())
-
-        browser.close()
+# network_interception_run()
 
 
-network_interception_error_run()
+# def network_interception_error_run():
+#     with sync_playwright() as p:
+#         browser = p.chromium.launch(headless=False)
+#         context = browser.new_context()
+#         page = context.new_page()
+
+#         def simulate_server_error(route):
+#             route.fulfill(
+#                 status=500, content_type="text/plain", body="Internal Server Error"
+#             )
+
+#         page.route("**/api/weather", simulate_server_error)
+#         page.goto(f"file://{Path.cwd()}/test_page.html")
+
+#         expect(page.locator("#result")).to_have_text("Error loading weather")
+#         print(page.locator("#result").text_content())
+
+#         browser.close()
+
+
+# network_interception_error_run()
