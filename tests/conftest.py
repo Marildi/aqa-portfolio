@@ -57,5 +57,6 @@ def configure_test_id(playwright):
 def authenticated_page(browser, auth_state):
     context = browser.new_context(storage_state=auth_state)
     page = context.new_page()
+    page.goto("https://www.saucedemo.com/inventory.html")
     yield page
     context.close()
