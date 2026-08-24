@@ -67,3 +67,47 @@ def test_create_post():
 def test_generate_income():
     invoice = requests.get(f"{BASE_URL}/income")
     assert invoice.status_code == 200
+
+
+def test_update_post():
+    updated_data = {"id": 1, "title": "updated", "body": "updated body", "userId": 1}
+    response = requests.put(f"{BASE_URL}/posts/1", json=updated_data)
+    assert response.status_code == 200
+    assert response.json()["title"] == "updated"
+
+
+def test_delete_post():
+    response = requests.delete(f"{BASE_URL}/posts/1")
+    assert response.status_code == 200
+
+
+# Step 62: requests library in depth — headers, auth, query params, JSON bodies
+url = f"{BASE_URL}/posts"
+
+
+def test_filter_posts():
+    response = requests.get(url, params={"userId": 1})
+    posts = response.json()
+    assert len(posts) > 0
+    assert all(post["userId"] == 1 for post in posts)
+
+
+def test_json_vs_data_request_body():
+    json_response = requests.post(
+        url, json={"title": "test", "body": "content", "userId": 1}
+    )
+    data_response = requests.post(
+        url, data={"title": "test", "body": "content", "userId": 1}
+    )
+
+    print("JSON request body:", json_response.request.body)
+    print("JSON content-type:", json_response.request.headers["Content-Type"])
+    print("Data request body:", data_response.request.body)
+    print("Data content-type:", data_response.request.headers["Content-Type"])
+
+
+def test_response_time_is_reasonable():
+    response = requests.get(url)
+    assert (
+        response.elapsed.total_seconds() < 2
+    ), f"Response took {response.elapsed.total_seconds()}s"
