@@ -14,6 +14,7 @@ dependencies = [
 dev = [
     "allure-pytest>=2.16.0",
     "factory-boy>=3.3.3",
+    "jsonschema>=4.26.0",
     "mypy>=2.3.0",
     "pillow>=12.3.0",
     "pre-commit>=4.6.1",

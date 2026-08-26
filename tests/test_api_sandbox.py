@@ -1,6 +1,7 @@
 # Step 45: A small end-to-end test suite (10+ tests) on a public sandbox site — consolidating Phase 3
 import pytest
 import requests
+from jsonschema import validate
 
 BASE_URL = "https://jsonplaceholder.typicode.com"
 
@@ -111,3 +112,21 @@ def test_response_time_is_reasonable():
     assert (
         response.elapsed.total_seconds() < 2
     ), f"Response took {response.elapsed.total_seconds()}s"
+
+
+# Step 63: JSON Schema validation (jsonschema library)
+post_schema = {
+    "type": "object",
+    "properties": {
+        "userId": {"type": "integer"},
+        "id": {"type": "integer"},
+        "title": {"type": "string"},
+        "body": {"type": "string"},
+    },
+    "required": ["id", "title", "body"],
+}
+
+
+def test_post_matches_schema():
+    response = requests.get(f"{BASE_URL}/posts/1")
+    validate(instance=response.json(), schema=post_schema)
