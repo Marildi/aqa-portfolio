@@ -129,3 +129,15 @@ post_schema = {
 def test_post_matches_schema(api_session):
     response = api_session.get(f"{BASE_URL}/posts/1")
     validate(instance=response.json(), schema=post_schema)
+
+
+# Step 66: Contract testing — what it solves vs. regular API testing
+def test_posts_endpoint_honors_contract(api_session):
+    """
+    Consumer-driven contract check: this schema represents what OUR system
+    expects from GET /posts/{id}. If the provider (JSONPlaceholder) changes
+    this shape, this test should fail — acting as an early warning before
+    real integration breaks.
+    """
+    response = api_session.get(f"{BASE_URL}/posts/1")
+    validate(instance=response.json(), schema=post_schema)
