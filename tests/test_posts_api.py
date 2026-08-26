@@ -1,31 +1,30 @@
 # Step 45: A small end-to-end test suite (10+ tests) on a public sandbox site — consolidating Phase 3
 import pytest
-import requests
 from jsonschema import validate
 
-BASE_URL = "https://jsonplaceholder.typicode.com"
+from utils.constants import BASE_URL
 
 
-def test_get_single_post_status_code():
-    response = requests.get(f"{BASE_URL}/posts/1")
+def test_get_single_post_status_code(api_session):
+    response = api_session.get(f"{BASE_URL}/posts/1")
     assert response.status_code == 200
 
 
-def test_get_single_post_has_expected_fields():
-    response = requests.get(f"{BASE_URL}/posts/1")
+def test_get_single_post_has_expected_fields(api_session):
+    response = api_session.get(f"{BASE_URL}/posts/1")
     data = response.json()
     assert "title" in data
     assert "userId" in data
 
 
 @pytest.mark.parametrize("post_id", [1, 5, 10, 100])
-def test_get_post_by_id_returns_matching_id(post_id):
-    response = requests.get(f"{BASE_URL}/posts/{post_id}")
+def test_get_post_by_id_returns_matching_id(post_id, api_session):
+    response = api_session.get(f"{BASE_URL}/posts/{post_id}")
     assert response.json()["id"] == post_id
 
 
-def test_get_nonexistent_post_returns_404():
-    response = requests.get(f"{BASE_URL}/posts/99999")
+def test_get_nonexistent_post_returns_404(api_session):
+    response = api_session.get(f"{BASE_URL}/posts/99999")
     assert response.status_code == 404
 
 
@@ -45,8 +44,8 @@ def test_get_post_title(mocker):
     assert result == "accusamus beatae ad facilis cum similique qui sunt"
 
 
-def test_nonexisting_user_id():
-    result = requests.get(f"{BASE_URL}/posts/0")
+def test_nonexisting_user_id(api_session):
+    result = api_session.get(f"{BASE_URL}/posts/0")
     assert result.status_code == 404
 
 
@@ -57,28 +56,28 @@ new_post_json = {
 }
 
 
-def test_create_post():
-    result = requests.post(f"{BASE_URL}/posts", json=new_post_json)
+def test_create_post(api_session):
+    result = api_session.post(f"{BASE_URL}/posts", json=new_post_json)
     assert result.status_code == 201
     data = result.json()
     assert data["title"] == "test"
 
 
 @pytest.mark.skip(reason="not merged functionality yet")
-def test_generate_income():
-    invoice = requests.get(f"{BASE_URL}/income")
+def test_generate_income(api_session):
+    invoice = api_session.get(f"{BASE_URL}/income")
     assert invoice.status_code == 200
 
 
-def test_update_post():
+def test_update_post(api_session):
     updated_data = {"id": 1, "title": "updated", "body": "updated body", "userId": 1}
-    response = requests.put(f"{BASE_URL}/posts/1", json=updated_data)
+    response = api_session.put(f"{BASE_URL}/posts/1", json=updated_data)
     assert response.status_code == 200
     assert response.json()["title"] == "updated"
 
 
-def test_delete_post():
-    response = requests.delete(f"{BASE_URL}/posts/1")
+def test_delete_post(api_session):
+    response = api_session.delete(f"{BASE_URL}/posts/1")
     assert response.status_code == 200
 
 
@@ -86,18 +85,18 @@ def test_delete_post():
 url = f"{BASE_URL}/posts"
 
 
-def test_filter_posts():
-    response = requests.get(url, params={"userId": 1})
+def test_filter_posts(api_session):
+    response = api_session.get(url, params={"userId": 1})
     posts = response.json()
     assert len(posts) > 0
     assert all(post["userId"] == 1 for post in posts)
 
 
-def test_json_vs_data_request_body():
-    json_response = requests.post(
+def test_json_vs_data_request_body(api_session):
+    json_response = api_session.post(
         url, json={"title": "test", "body": "content", "userId": 1}
     )
-    data_response = requests.post(
+    data_response = api_session.post(
         url, data={"title": "test", "body": "content", "userId": 1}
     )
 
@@ -107,8 +106,8 @@ def test_json_vs_data_request_body():
     print("Data content-type:", data_response.request.headers["Content-Type"])
 
 
-def test_response_time_is_reasonable():
-    response = requests.get(url)
+def test_response_time_is_reasonable(api_session):
+    response = api_session.get(url)
     assert (
         response.elapsed.total_seconds() < 2
     ), f"Response took {response.elapsed.total_seconds()}s"
@@ -127,6 +126,6 @@ post_schema = {
 }
 
 
-def test_post_matches_schema():
-    response = requests.get(f"{BASE_URL}/posts/1")
+def test_post_matches_schema(api_session):
+    response = api_session.get(f"{BASE_URL}/posts/1")
     validate(instance=response.json(), schema=post_schema)
