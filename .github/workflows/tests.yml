@@ -1,4 +1,7 @@
 name: Run Tests
+env:
+  SECRET_KEY: ${{ secrets.TEST_SECRET_KEY }}
+  run: uv run pytest -v
 
 on:
   push:
