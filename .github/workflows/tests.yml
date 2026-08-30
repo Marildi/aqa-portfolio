@@ -47,4 +47,8 @@ jobs:
       - name: Upload test artifacts to S3
         if: always()
         run: |
-          aws s3 cp test-results/ s3://maryna-aqa-portfolio-artifacts/run-${{ github.run_id }}-py${{ matrix.python-version }}-${{ matrix.browser }}/ --recursive
+          if [ -d "test-results" ]; then
+            aws s3 cp test-results/ s3://maryna-aqa-portfolio-artifacts/run-${{ github.run_id }}-py${{ matrix.python-version }}-${{ matrix.browser }}/ --recursive
+          else
+            echo "No test-results directory found - nothing to upload (likely all tests passed)"
+          fi
