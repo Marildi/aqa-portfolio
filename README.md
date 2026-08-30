@@ -48,8 +48,8 @@ aqa-portfolio/
 - [x] Phase 1 — Intermediate Python
 - [x] Phase 2 — Git, Command Line & Dev Practices (in progress)
 - [x] Phase 3 — Pytest and Testing Fundamentals
-- [ ] Phase 4 — Playwright (Python)
-- [ ] Phase 5 — API Testing
+- [x] Phase 4 — Playwright (Python)
+- [x] Phase 5 — API Testing
 - [ ] Phase 6 — CI/CD, Docker & Cloud
 - [ ] Phase 7 — SQL, Performance & Security Testing
 - [ ] Phase 8 — Systems Engineering & Aerospace/Defense Layer
