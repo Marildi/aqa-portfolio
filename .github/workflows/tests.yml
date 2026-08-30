@@ -77,3 +77,14 @@ jobs:
           name: allure-report-py${{ matrix.python-version }}-${{ matrix.browser }}
           path: allure-report/
           retention-days: 30
+
+      - name: Notify Slack on failure
+        if: failure()
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {
+              "text": "CI failed on ${{ github.repository }} - branch ${{ github.ref_name }}, run ${{ github.run_id }}"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
