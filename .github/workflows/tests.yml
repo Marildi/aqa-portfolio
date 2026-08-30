@@ -1,7 +1,4 @@
 name: Run Tests
-env:
-  SECRET_KEY: ${{ secrets.TEST_SECRET_KEY }}
-  run: uv run pytest -v
 
 on:
   push:
@@ -35,4 +32,19 @@ jobs:
         run: uv run playwright install --with-deps ${{ matrix.browser }}
 
       - name: Run tests
-        run: uv run pytest -v --browser ${{ matrix.browser }}
+        env:
+          SECRET_KEY: ${{ secrets.TEST_SECRET_KEY }}
+        run: uv run pytest -v --browser ${{ matrix.browser }} --tracing retain-on-failure --screenshot only-on-failure
+
+      - name: Configure AWS credentials
+        if: always()
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Upload test artifacts to S3
+        if: always()
+        run: |
+          aws s3 cp test-results/ s3://maryna-aqa-portfolio-artifacts/run-${{ github.run_id }}-py${{ matrix.python-version }}-${{ matrix.browser }}/ --recursive
