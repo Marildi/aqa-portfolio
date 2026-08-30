@@ -9,6 +9,11 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+        browser: [chromium, firefox]
 
     steps:
       - name: Check out code
@@ -18,13 +23,13 @@ jobs:
         uses: astral-sh/setup-uv@v3
 
       - name: Set up Python
-        run: uv python install 3.12
+        run: uv python install ${{ matrix.python-version }}
 
       - name: Install dependencies
         run: uv sync
 
       - name: Install Playwright browsers
-        run: uv run playwright install --with-deps chromium
+        run: uv run playwright install --with-deps ${{ matrix.browser }}
 
       - name: Run tests
-        run: uv run pytest -v
+        run: uv run pytest -v --browser ${{ matrix.browser }}
