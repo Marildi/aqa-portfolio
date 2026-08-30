@@ -142,7 +142,7 @@
 #     response = api_session.get(f"{BASE_URL}/posts/1")
 #     validate(instance=response.json(), schema=post_schema)
 
-# Step 67: GraphQL basics — many modern apps use it, know how to query and test it
+# Step 67: GraphQL basics
 import requests
 
 
