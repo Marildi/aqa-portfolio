@@ -28,13 +28,16 @@ jobs:
       - name: Install dependencies
         run: uv sync
 
+      - name: Lint with Ruff
+        run: uv run ruff check .
+
       - name: Install Playwright browsers
         run: uv run playwright install --with-deps ${{ matrix.browser }}
 
       - name: Run tests
         env:
           SECRET_KEY: ${{ secrets.TEST_SECRET_KEY }}
-        run: uv run pytest -v --browser ${{ matrix.browser }} --tracing retain-on-failure --screenshot only-on-failure
+        run: uv run pytest -v --browser ${{ matrix.browser }} --tracing retain-on-failure --screenshot only-on-failure --alluredir=allure-results
 
       - name: Configure AWS credentials
         if: always()
@@ -52,9 +55,6 @@ jobs:
           else
             echo "No test-results directory found - nothing to upload (likely all tests passed)"
           fi
-
-      - name: Generate Allure results
-        run: uv run pytest --alluredir=allure-results
 
       - name: Upload Allure results as artifact
         if: always()
