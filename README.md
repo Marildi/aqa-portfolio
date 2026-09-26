@@ -50,7 +50,7 @@ aqa-portfolio/
 - [x] Phase 3 — Pytest and Testing Fundamentals
 - [x] Phase 4 — Playwright (Python)
 - [x] Phase 5 — API Testing
-- [ ] Phase 6 — CI/CD, Docker & Cloud
+- [x] Phase 6 — CI/CD, Docker & Cloud
 - [ ] Phase 7 — SQL, Performance & Security Testing
 - [ ] Phase 8 — Systems Engineering & Aerospace/Defense Layer
 - [ ] Phase 9 — Portfolio, Positioning & Contract-Readiness
