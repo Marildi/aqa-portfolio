@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import jwt
 import pytest
@@ -36,7 +36,7 @@ SECRET_KEY = "a_much_longer_test_secret_key_for_hs256_1234567890"  # 32+ bytes
 def generate_token(expires_in_seconds: int = 3600) -> str:
     payload = {
         "user": "maryna",
-        "exp": datetime.now(timezone.utc) + timedelta(seconds=expires_in_seconds),
+        "exp": datetime.now(UTC) + timedelta(seconds=expires_in_seconds),
     }
     return jwt.encode(payload, SECRET_KEY, algorithm="HS256")
 

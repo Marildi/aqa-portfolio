@@ -326,9 +326,9 @@ changeCustomerRole("kejfbekf22mm_dddcfdf", "stakeholder", bad_auth_header)
 
 # FINALLY
 try:
-    f = open("data/test_users_list.csv", "x")
-    data = f.write("text")
+    with open("notes.txt", "x") as f:
+        f.write("hello")
 except FileExistsError:
-    print("File already generated")
+    print("already there")
 finally:
-    print("Check completed")
+    print("done")
