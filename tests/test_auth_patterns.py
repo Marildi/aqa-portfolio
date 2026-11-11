@@ -14,16 +14,19 @@ def call_protected_endpoint(headers: dict) -> dict:
     return {"status_code": 200, "body": {"data": "secret info"}}
 
 
+@pytest.mark.security
 def test_valid_api_key_succeeds():
     response = call_protected_endpoint({"X-API-Key": API_KEY})
     assert response["status_code"] == 200
 
 
+@pytest.mark.security
 def test_missing_api_key_fails():
     response = call_protected_endpoint({})
     assert response["status_code"] == 401
 
 
+@pytest.mark.security
 def test_wrong_api_key_fails():
     response = call_protected_endpoint({"X-API-Key": "wrong-key"})
     assert response["status_code"] == 401
@@ -45,18 +48,21 @@ def verify_token(token: str) -> dict:
     return jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
 
 
+@pytest.mark.security
 def test_valid_token_decodes_successfully():
     token = generate_token(expires_in_seconds=3600)
     payload = verify_token(token)
     assert payload["user"] == "maryna"
 
 
+@pytest.mark.security
 def test_expired_token_raises_error():
     token = generate_token(expires_in_seconds=-10)  # already expired
     with pytest.raises(jwt.ExpiredSignatureError):
         verify_token(token)
 
 
+@pytest.mark.security
 def test_tampered_token_raises_error():
     token = generate_token()
     tampered_token = token[:-5] + "xxxxx"  # corrupt the signature
@@ -64,6 +70,7 @@ def test_tampered_token_raises_error():
         verify_token(token=tampered_token)
 
 
+@pytest.mark.security
 def test_bearer_token_header_format():
     token = generate_token()
     headers = {"Authorization": f"Bearer {token}"}

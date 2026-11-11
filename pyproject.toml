@@ -33,5 +33,6 @@ dev = [
 pythonpath = ["."]
 markers = [
     "pentest: tests malicious payloads",
-    "custom: for step 45 testing"
+    "custom: for step 45 testing",
+    "security: for step 88 testing"
 ]

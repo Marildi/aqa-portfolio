@@ -14,6 +14,7 @@ from utils.orders_api import get_order_secure, get_order_vulnerable
     ],
     ids=["owner_bob", "owner_alice", "stranger_blocked", "missing_order"],
 )
+@pytest.mark.security
 def test_order_access(user, order_id, expected_status):
     response = get_order_secure(user, order_id)
     assert response["status_code"] == expected_status
@@ -23,6 +24,7 @@ def test_order_access(user, order_id, expected_status):
 @pytest.mark.xfail(
     reason="vulnerable version leaks other users' orders (BOLA)", strict=True
 )
+@pytest.mark.security
 def test_vulnerable_version_leaks_other_users_order():
     result = get_order_vulnerable("bob", "001")
     assert result["status_code"] == 404
