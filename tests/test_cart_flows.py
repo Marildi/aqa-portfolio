@@ -10,7 +10,7 @@ def test_item_appears_in_cart(authenticated_page):
     inventory.cart_link.click()
 
     cart = CartPage(authenticated_page)
-    assert cart.get_item_count() == 1
+    expect(cart.cart_items).to_have_count(1)
 
 
 def test_remove_item_from_cart(authenticated_page):
@@ -20,7 +20,7 @@ def test_remove_item_from_cart(authenticated_page):
 
     cart = CartPage(authenticated_page)
     cart.remove_item("sauce-labs-backpack")
-    assert cart.get_item_count() == 0
+    expect(cart.cart_items).to_have_count(0)
 
 
 def test_checkout_button_navigates(authenticated_page):
