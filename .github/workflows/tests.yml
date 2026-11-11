@@ -33,7 +33,7 @@ jobs:
         run: uv run ruff check .
 
       - name: Install Playwright browsers
-        run: uv run playwright install --with-deps ${{ matrix.browser }}
+        run: uv run playwright install ${{ matrix.browser }}
 
       - name: Run tests
         env:
