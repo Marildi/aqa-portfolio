@@ -79,7 +79,7 @@ jobs:
           retention-days: 30
 
   notify:
-    needs: test
+    needs: [test, security-scan]
     if: failure()
     runs-on: ubuntu-latest
     steps:
