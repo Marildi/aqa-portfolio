@@ -33,12 +33,19 @@ uv sync
 
 \`\`\`
 aqa-portfolio/
-├── syntax_practice.py
-├── phase1_intermediate_python.py
-├── phase2_git_shell_dev_practices.py
-├── utils/
-│   └── fuel_checks.py
-└── ...
+├── tests/                 # pytest suites: UI (Playwright), API, DB, security
+│   ├── conftest.py        # shared fixtures
+│   ├── test_bola.py       # security: BOLA access control
+│   ├── test_auth_patterns.py   # API key + JWT
+│   ├── test_database.py   # SQL + injection checks
+│   └── test_*_flows.py    # Playwright UI flows (page objects)
+├── pages/                 # Page Object Model classes
+├── utils/                 # helpers, incl. orders_api.py (BOLA demo)
+├── sql/                   # SQL exercises and schema
+├── docs/                  # security_test_report.md and notes
+├── locustfile.py          # load testing
+├── Dockerfile
+└── .github/workflows/     # CI: tests (matrix), ZAP scan, notifications
 \`\`\`
 
 ## Security + Functional Testing
