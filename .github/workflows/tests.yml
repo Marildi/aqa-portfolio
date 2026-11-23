@@ -38,7 +38,7 @@ jobs:
       - name: Run tests
         env:
           SECRET_KEY: ${{ secrets.TEST_SECRET_KEY }}
-        run: uv run pytest -v --browser ${{ matrix.browser }} --tracing retain-on-failure --screenshot only-on-failure --alluredir=allure-results
+        run: uv run pytest -v --ignore=tests/test_sitl_telemetry.py --browser ${{ matrix.browser }} --tracing retain-on-failure --screenshot only-on-failure --alluredir=allure-results
 
       - name: Configure AWS credentials
         if: always()
@@ -79,11 +79,37 @@ jobs:
           path: allure-report/
           retention-days: 30
 
-      - name: Run tests
-        run: uv run pytest -v --ignore=tests/test_sitl_telemetry.py --browser ${{ matrix.browser }} ...
+  sitl-tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+      - run: uv sync
+
+      - name: Start SITL container
+        run: |
+          docker run -d --name sitl -p 127.0.0.1:5760:5760 \
+            ghcr.io/marildi/ardupilot-sitl:latest \
+            bash -c "Tools/autotest/sim_vehicle.py -v ArduCopter --no-mavproxy -j4"
+
+      - name: Wait for SITL heartbeat
+        run: |
+          for i in $(seq 1 30); do
+            uv run --with pymavlink python -c "
+          from pymavlink import mavutil
+          m = mavutil.mavlink_connection('tcp:127.0.0.1:5760')
+          m.wait_heartbeat(timeout=2)
+          " && break
+            sleep 2
+          done
+
+      - name: Run SITL tests
+        run: uv run pytest tests/test_sitl_telemetry.py -v
 
   notify:
-    needs: [test, security-scan]
+    needs: [test, security-scan, sitl-tests]
     if: failure()
     runs-on: ubuntu-latest
     steps:
@@ -118,32 +144,3 @@ jobs:
         with:
           name: zap-report
           path: zap-reports/
-
-  sitl-tests:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install uv
-        uses: astral-sh/setup-uv@v3
-      - run: uv sync
-
-      - name: Start SITL container
-        run: |
-          docker run -d --name sitl -p 127.0.0.1:5760:5760 \
-            ghcr.io/marildi/ardupilot-sitl:latest \
-            bash -c "Tools/autotest/sim_vehicle.py -v ArduCopter --no-mavproxy -j4"
-
-      - name: Wait for SITL heartbeat
-        run: |
-          for i in $(seq 1 30); do
-            uv run --with pymavlink python -c "
-          from pymavlink import mavutil
-          m = mavutil.mavlink_connection('tcp:127.0.0.1:5760')
-          m.wait_heartbeat(timeout=2)
-          " && break
-            sleep 2
-          done
-
-      - name: Run SITL tests
-        run: uv run pytest tests/test_sitl_telemetry.py -v
