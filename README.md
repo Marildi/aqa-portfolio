@@ -20,6 +20,7 @@ systems and defense-adjacent QA roles.
 - uv (dependency management)
 - pytest, Playwright (upcoming)
 - Ruff (linting/formatting)
+- pymavlink (hardware-sim testing against ArduPilot SITL)
 
 ## Setup
 
@@ -46,6 +47,7 @@ aqa-portfolio/
 ├── locustfile.py          # load testing
 ├── Dockerfile
 └── .github/workflows/     # CI: tests (matrix), ZAP scan, notifications
+│   ├── test_sitl_telemetry.py  # ArduPilot SITL: telemetry + failsafe fault-injection
 \`\`\`
 
 ## Security + Functional Testing
@@ -61,6 +63,9 @@ Functional tests check the app works for the people it's meant for; security tes
 
 Security tests are tagged `@pytest.mark.security` (`uv run pytest -m security`). Findings are in [docs/security_test_report.md](docs/security_test_report.md); CI also runs a ZAP baseline scan against Juice Shop.
 
+## Hardware-in-the-Loop Testing
+
+Beyond software-only testing: automated pytest tests against a real ArduPilot flight-controller build, running in a container ([setup](docs/sitl_setup.md)), talking MAVLink. Fault-injection tests (GPS loss, battery-critical) verify ArduPilot's actual safety response, not just telemetry values — see [docs/mavlink_notes.md](docs/mavlink_notes.md) for details and one non-obvious finding from debugging it.
 
 ## Progress
 

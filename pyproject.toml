@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "pyjwt>=2.13.0",
+    "pymavlink>=2.4.50",
     "python-dotenv>=1.2.2",
     "requests>=2.34.2",
 ]

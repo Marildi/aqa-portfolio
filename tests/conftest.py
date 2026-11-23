@@ -2,6 +2,7 @@
 
 import pytest
 import requests
+from pymavlink import mavutil
 
 # @pytest.fixture
 # def temp_results_file():
@@ -69,3 +70,14 @@ def browser_type_launch_args(browser_type_launch_args):
 @pytest.fixture(scope="session")
 def browser_context_args(browser_context_args):
     return {**browser_context_args, "viewport": {"width": 1280, "height": 720}}
+
+
+@pytest.fixture(scope="session")
+def sitl():
+    m = mavutil.mavlink_connection("tcp:127.0.0.1:5760")
+    m.wait_heartbeat()
+    m.mav.heartbeat_send(
+        mavutil.mavlink.MAV_TYPE_GCS, mavutil.mavlink.MAV_AUTOPILOT_INVALID, 0, 0, 0
+    )
+    yield m
+    m.close()
