@@ -39,6 +39,7 @@ aqa-portfolio/
 │   ├── test_bola.py       # security: BOLA access control
 │   ├── test_auth_patterns.py   # API key + JWT
 │   ├── test_database.py   # SQL + injection checks
+│   ├── test_sitl_telemetry.py  # ArduPilot SITL: telemetry + failsafe fault-injection
 │   └── test_*_flows.py    # Playwright UI flows (page objects)
 ├── pages/                 # Page Object Model classes
 ├── utils/                 # helpers, incl. orders_api.py (BOLA demo)
@@ -47,7 +48,6 @@ aqa-portfolio/
 ├── locustfile.py          # load testing
 ├── Dockerfile
 └── .github/workflows/     # CI: tests (matrix), ZAP scan, notifications
-│   ├── test_sitl_telemetry.py  # ArduPilot SITL: telemetry + failsafe fault-injection
 \`\`\`
 
 ## Security + Functional Testing
