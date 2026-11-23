@@ -4,8 +4,15 @@ import socket
 from pymavlink import mavutil
 
 
+# REQ-01: THE system SHALL report active state.
+# → test_heartbeat_received
 def test_heartbeat_received(sitl):
     assert sitl.target_system == 1
+
+
+# REQ-02: WHILE the vehicle is on the ground,
+# the flight controller SHALL report a relative altitude near zero via telemetry.
+# → test_altitude_sane_on_ground
 
 
 def test_altitude_sane_on_ground(sitl):
@@ -27,6 +34,11 @@ def test_altitude_sane_on_ground(sitl):
     assert math.isclose(gpi.relative_alt, 0, abs_tol=500)
 
 
+# REQ-03: WHEN GPS signal is lost,
+# the flight controller SHALL report a degraded fix status via telemetry.
+# → test_gps_loss_triggers_failsafe
+
+
 def test_gps_loss_triggers_failsafe(sitl):
     sitl.mav.param_set_send(
         sitl.target_system,
@@ -37,7 +49,6 @@ def test_gps_loss_triggers_failsafe(sitl):
     )
 
     ack = sitl.recv_match(type="PARAM_VALUE", blocking=True, timeout=5)
-    # print("param ack:", ack)
     assert ack.param_value == 0
 
     # statustext is silent, checking the theory: a disarmed, grounded vehicle likely
@@ -60,9 +71,13 @@ def test_gps_loss_triggers_failsafe(sitl):
         0,
     )
     gps_raw = sitl.recv_match(type="GPS_RAW_INT", blocking=True, timeout=10)
-    # print("fix_type:", gps_raw.fix_type if gps_raw else None)
     assert gps_raw is not None
     assert gps_raw.fix_type < 2
+
+
+# REQ-04: IF battery voltage drops below the critical threshold,
+# THEN the flight controller SHALL reject arming and report the reason.
+# → test_battery_critical_triggers_failsafe
 
 
 def test_battery_critical_triggers_failsafe(sitl):
@@ -81,7 +96,6 @@ def test_battery_critical_triggers_failsafe(sitl):
         0,
     )
     batt = sitl.recv_match(type="BATTERY_STATUS", blocking=True, timeout=10)
-    # print(batt)
     assert batt is not None
     assert batt.voltages[0] < 13000  # mV, below BATT_CRT_VOLT threshold
 
@@ -94,7 +108,6 @@ def test_battery_critical_triggers_failsafe(sitl):
         mavutil.mavlink.MAV_PARAM_TYPE_REAL32,
     )
     ack = sitl.recv_match(type="PARAM_VALUE", blocking=True, timeout=5)
-    # print(ack)
     assert ack.param_value == 13.0
 
     # investigating why battery wasn't reduced
@@ -116,14 +129,16 @@ def test_battery_critical_triggers_failsafe(sitl):
         0,
     )
     arm_result = sitl.recv_match(type="COMMAND_ACK", blocking=True, timeout=5)
-    # print("arm result:", arm_result)
     assert arm_result is not None
     assert arm_result.result == mavutil.mavlink.MAV_RESULT_FAILED
 
     reason = sitl.recv_match(type="STATUSTEXT", blocking=True, timeout=5)
-    # print("arm failure reason:", reason)
     assert reason is not None
     assert "battery" in reason.text.lower() and "critical" in reason.text.lower()
+
+
+# REQ-05:IF malformed bytes are present in the packet,
+# THEN the system SHALL ignore it and remain active on the same link.
 
 
 def test_garbage_bytes_do_not_crash_sitl(sitl):
@@ -136,6 +151,10 @@ def test_garbage_bytes_do_not_crash_sitl(sitl):
     assert hb is not None
     assert hb.get_type() == "HEARTBEAT"
     assert sitl.target_system == 1
+
+
+# REQ-06: IF an unsupported command is received,
+# THEN the system SHALL reject the command with a clear error.
 
 
 def test_unsupported_command_returns_proper_error(sitl):
@@ -155,6 +174,12 @@ def test_unsupported_command_returns_proper_error(sitl):
     ack = sitl.recv_match(type="COMMAND_ACK", blocking=True, timeout=5)
     assert ack is not None
     assert ack.result == mavutil.mavlink.MAV_RESULT_UNSUPPORTED
+
+
+# REQ-07: IF a received packet fails CRC validation,
+# THEN the system SHALL discard it without a reply,
+# and SHALL continue processing subsequent valid requests on the same link.
+# → test_bad_crc_packet_is_rejected
 
 
 def test_bad_crc_packet_is_rejected(sitl):

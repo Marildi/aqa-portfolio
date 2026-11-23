@@ -77,5 +77,5 @@ Beyond software-only testing: automated pytest tests against a real ArduPilot fl
 - [x] Phase 5 — API Testing
 - [x] Phase 6 — CI/CD, Docker & Cloud
 - [x] Phase 7 — SQL, Performance & Security Testing
-- [ ] Phase 8 — Systems Engineering & Aerospace/Defense Layer
+- [x] Phase 8 — Systems Engineering & Aerospace/Defense Layer
 - [ ] Phase 9 — Portfolio, Positioning & Contract-Readiness
