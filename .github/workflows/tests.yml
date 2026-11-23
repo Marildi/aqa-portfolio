@@ -82,8 +82,19 @@ jobs:
   sitl-tests:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
+    permissions:
+      packages: read
+      contents: read
     steps:
       - uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Install uv
         uses: astral-sh/setup-uv@v3
       - run: uv sync
@@ -107,13 +118,6 @@ jobs:
 
       - name: Run SITL tests
         run: uv run pytest tests/test_sitl_telemetry.py -v
-
-      - name: Log in to GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
 
   notify:
     needs: [test, security-scan, sitl-tests]
