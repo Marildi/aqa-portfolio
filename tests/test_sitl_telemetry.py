@@ -1,4 +1,5 @@
 import math
+import socket
 
 from pymavlink import mavutil
 
@@ -123,3 +124,75 @@ def test_battery_critical_triggers_failsafe(sitl):
     # print("arm failure reason:", reason)
     assert reason is not None
     assert "battery" in reason.text.lower() and "critical" in reason.text.lower()
+
+
+def test_garbage_bytes_do_not_crash_sitl(sitl):
+    s = socket.create_connection(("127.0.0.1", 5760), timeout=5)
+    s.sendall(b"\x00\xff\x13\x37\xde\xad\xbe\xef" * 10)  # junk, not valid MAVLink
+    s.close()
+
+    hb = sitl.recv_match(type="HEARTBEAT", blocking=True, timeout=10)
+    print(hb)
+    assert hb is not None
+    assert hb.get_type() == "HEARTBEAT"
+    assert sitl.target_system == 1
+
+
+def test_unsupported_command_returns_proper_error(sitl):
+    sitl.mav.command_long_send(
+        sitl.target_system,
+        sitl.target_component,
+        60000,
+        0,  # nonsense command ID — no such command exists
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+    )
+    ack = sitl.recv_match(type="COMMAND_ACK", blocking=True, timeout=5)
+    assert ack is not None
+    assert ack.result == mavutil.mavlink.MAV_RESULT_UNSUPPORTED
+
+
+def test_bad_crc_packet_is_rejected(sitl):
+    # Build a real, valid PARAM_REQUEST_READ packet
+    msg = sitl.mav.param_request_read_encode(
+        sitl.target_system, sitl.target_component, b"BATT_FS_CRT_ACT", -1
+    )
+    good_bytes = msg.pack(sitl.mav)
+
+    # Corrupt the last byte (part of the checksum) — same payload, broken CRC
+    bad_bytes = bytearray(good_bytes)
+    bad_bytes[-1] ^= 0xFF
+
+    s = socket.create_connection(("127.0.0.1", 5760), timeout=5)
+    s.sendall(bytes(bad_bytes))
+    s.close()
+
+    corrupted_reply = None
+    for _ in range(5):
+        msg2 = sitl.recv_match(type="PARAM_VALUE", blocking=True, timeout=2)
+        if msg2 is None:
+            break
+        if msg2.param_id == "BATT_FS_CRT_ACT":
+            corrupted_reply = msg2
+            break
+
+    assert corrupted_reply is None  # corrupted packet got no reply
+
+    sitl.mav.param_request_read_send(
+        sitl.target_system, sitl.target_component, b"BATT_FS_CRT_ACT", -1
+    )
+    real_reply = None
+    for _ in range(20):
+        msg3 = sitl.recv_match(type="PARAM_VALUE", blocking=True, timeout=5)
+        if msg3 is None:
+            break
+        if msg3.param_id == "BATT_FS_CRT_ACT":
+            real_reply = msg3
+            break
+
+    assert real_reply is not None  # link still works for a valid request

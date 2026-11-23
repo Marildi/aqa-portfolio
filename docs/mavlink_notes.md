@@ -28,4 +28,16 @@ Three pytest tests in `tests/test_sitl_telemetry.py`, against a locally running 
 | `test_gps_loss_triggers_failsafe` | Setting `SIM_GPS1_ENABLE=0` actually degrades `GPS_RAW_INT.fix_type` |
 | `test_battery_critical_triggers_failsafe` | Setting `BATT_CRT_VOLT` above the real voltage blocks arming, with the correct reason in `STATUSTEXT` |
 
-**Non-obvious finding:** for the battery case, ArduPilot's `BATTERY_STATUS.charge_state` field never updated, even with a failsafe action (`BATT_FS_CRT_ACT`) configured. The fault *was* detected — the proof was the vehicle refusing to arm and `STATUSTEXT` naming "Battery 1 critical voltage failsafe," not the telemetry field I expected to show it. Lesson: don't assume the obvious status field reflects internal state — verify against the system's actual behavior.
+**Non-obvious findings:**
+For the battery case, ArduPilot's `BATTERY_STATUS.charge_state` field never updated, even with a failsafe action (`BATT_FS_CRT_ACT`) configured. The fault *was* detected — the proof was the vehicle refusing to arm and `STATUSTEXT` naming "Battery 1 critical voltage failsafe," not the telemetry field I expected to show it. Lesson: don't assume the obvious status field reflects internal state — verify against the system's actual behavior.
+Pre-arm failure tests can be flaky right after a fresh SITL boot, since an unrelated check (accel settling) may report first — checked when executet test_sitl_telemetry.py after fresh start.
+
+## Malformed/malicious input tests (step 94)
+
+Three distinct failure categories tested against SITL, in `tests/test_sitl_telemetry.py`:
+
+| Test | Input | Verifies |
+|---|---|---|
+| `test_garbage_bytes_do_not_crash_sitl` | Random bytes, not MAVLink at all | Link survives, heartbeat keeps flowing |
+| `test_unsupported_command_returns_proper_error` | Well-formed packet, nonsense command ID | ArduPilot replies `MAV_RESULT_UNSUPPORTED`, doesn't crash or hang |
+| `test_bad_crc_packet_is_rejected` | Well-formed payload, corrupted checksum | Silently dropped (no reply) — proves CRC validation specifically, not just general robustness; a
