@@ -105,6 +105,12 @@ jobs:
             ghcr.io/marildi/ardupilot-sitl:latest \
             bash -c "Tools/autotest/sim_vehicle.py -v ArduCopter --no-mavproxy -j4"
 
+      - name: Check SITL container state
+        run: |
+          sleep 3
+          docker ps -a
+          docker logs sitl
+
       - name: Wait for SITL heartbeat
         run: |
           for i in $(seq 1 30); do
