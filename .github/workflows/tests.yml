@@ -102,24 +102,24 @@ jobs:
       - name: Start SITL container
         run: |
           docker run -d --name sitl -p 127.0.0.1:5760:5760 \
-            ghcr.io/marildi/ardupilot-sitl:latest \
-            bash -c "Tools/autotest/sim_vehicle.py -v ArduCopter --no-mavproxy -j4"
+            ghcr.io/marildi/ardupilot-sitl:latest
 
-      - name: Check SITL container state
+      - name: Diagnose SITL container
         run: |
-          sleep 3
+          sleep 10
           docker ps -a
-          docker logs sitl
+          docker logs sitl --tail 100
+          docker exec sitl cat /tmp/ArduCopter.log || true
 
       - name: Wait for SITL heartbeat
         run: |
-          for i in $(seq 1 30); do
+          for i in $(seq 1 15); do
             uv run --with pymavlink python -c "
           from pymavlink import mavutil
           m = mavutil.mavlink_connection('tcp:127.0.0.1:5760')
           m.wait_heartbeat(timeout=2)
           " && break
-            sleep 2
+            sleep 4
           done
 
       - name: Run SITL tests
