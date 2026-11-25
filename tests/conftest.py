@@ -1,5 +1,7 @@
 # import os
 
+import time
+
 import pytest
 import requests
 from pymavlink import mavutil
@@ -75,9 +77,11 @@ def browser_context_args(browser_context_args):
 @pytest.fixture(scope="session")
 def sitl():
     m = mavutil.mavlink_connection("tcp:127.0.0.1:5760")
-    m.wait_heartbeat()
+    m.wait_heartbeat(timeout=10)
     m.mav.heartbeat_send(
         mavutil.mavlink.MAV_TYPE_GCS, mavutil.mavlink.MAV_AUTOPILOT_INVALID, 0, 0, 0
     )
+    # IMU/EKF settling in ArduPilot settling
+    time.sleep(15)
     yield m
     m.close()
